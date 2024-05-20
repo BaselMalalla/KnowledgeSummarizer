@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>NewPost</ion-title>
+    <ion-title>Create a new post</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -35,32 +35,51 @@
           </ion-radio-group>
         </ion-item>
         <ion-item>
+          <ion-label position="floating"
+            >Topic(s) separate them by comma</ion-label
+          >
+          <ion-input formControlName="topicsString"></ion-input>
+        </ion-item>
+        <ion-item>
           <ion-label position="floating">Title</ion-label>
           <ion-input formControlName="title"></ion-input>
         </ion-item>
-        <ion-item>
-          <ion-label position="floating">Summary 1</ion-label>
-          <ion-textarea formControlName="summary"></ion-textarea>
-        </ion-item>
+        <div formGroupName="detail">
+          <ion-item>
+            <ion-label position="floating">Summary 1</ion-label>
+            <ion-textarea formControlName="summary"></ion-textarea>
+          </ion-item>
 
-        <!-- Summaries for books -->
-        <div formArrayName="summariesArray">
+          <ion-item>
+            <ion-label position="floating">Image</ion-label>
+            <ion-input type="file" formControlName="image"></ion-input>
+          </ion-item>
+        </div>
+
+        <div formArrayName="detailsArray">
           <div *ngIf="postForm.get('type')?.value === 'book'">
-            <ion-item
-              *ngFor="let summary of summariesArray.controls; let i = index"
+            <div
+              *ngFor="let detail of detailsArray.controls; let i = index"
+              [formGroupName]="i"
             >
-              <ion-label position="floating">Summary {{ i + 2 }}</ion-label>
-              <ion-textarea [formControlName]="i"></ion-textarea>
-              <ion-button (click)="removeSummary(i)">Remove</ion-button>
-            </ion-item>
-            <ion-button (click)="addSummary()">Add Summary</ion-button>
+              <ion-item>
+                <ion-label position="floating">Summary {{ i + 2 }}</ion-label>
+                <ion-textarea formControlName="summary"></ion-textarea>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">Image</ion-label>
+                <ion-input type="file" formControlName="image"></ion-input>
+              </ion-item>
+              <ion-button (click)="removeDetail(i)" color="danger"
+                >Remove</ion-button
+              >
+            </div>
+            <ion-button expand="full" (click)="addDetail()"
+              >Add Summary</ion-button
+            >
           </div>
         </div>
 
-        <ion-item>
-          <ion-label position="floating">Image</ion-label>
-          <ion-input type="file" formControlName="image"></ion-input>
-        </ion-item>
         <ion-button expand="block" type="submit" [disabled]="postForm.invalid"
           >Get Posted</ion-button
         >

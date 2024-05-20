@@ -48,11 +48,11 @@ export class AuthPage implements OnInit {
       if (user) {
         // User is signed in, redirect to home page
         this.router.navigate(['/home']);
-        alert('welcome user is signed in ');
+        // alert('welcome user is signed in ');
       } else {
         // No user is signed in, redirect to sign up page
         this.router.navigate(['/auth']);
-        alert('user is not signed in please sign in ');
+        // alert('user is not signed in please sign in ');
       }
     });
   }
