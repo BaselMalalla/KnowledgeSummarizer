@@ -11,11 +11,17 @@ const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
-  },  {
-    path: 'new-post',
-    loadChildren: () => import('./new-post/new-post.module').then( m => m.NewPostPageModule)
   },
-
+  {
+    path: 'new-post',
+    loadChildren: () =>
+      import('./new-post/new-post.module').then((m) => m.NewPostPageModule),
+  },
+  {
+    path: 'auth',
+    loadChildren: () =>
+      import('./auth/auth.module').then((m) => m.AuthPageModule),
+  },
 ];
 
 @NgModule({
