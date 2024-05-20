@@ -15,6 +15,7 @@ export class NewPostPage {
     this.postForm = this.fb.group({
       type: ['', Validators.required],
       title: ['', Validators.required],
+      topic: ['', Validators.required],
       summary: ['', Validators.required],
       summariesArray: this.fb.array([]),
       image: [''],
