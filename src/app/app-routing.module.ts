@@ -33,19 +33,26 @@ const routes: Routes = [
       import('./edit-profile/edit-profile.module').then(
         (m) => m.EditProfilePageModule
       ),
-  },  {
+  },
+  {
+    path: 'search',
+    loadChildren: () =>
+      import('./search/search.module').then((m) => m.SearchPageModule),
+  },
+  {
     path: 'post',
-    loadChildren: () => import('./post/post.module').then( m => m.PostPageModule)
+    loadChildren: () =>
+      import('./post/post.module').then((m) => m.PostPageModule),
   },
   {
     path: 'fav',
-    loadChildren: () => import('./fav/fav.module').then( m => m.FavPageModule)
+    loadChildren: () => import('./fav/fav.module').then((m) => m.FavPageModule),
   },
   {
     path: 'veiw',
-    loadChildren: () => import('./veiw/veiw.module').then( m => m.VeiwPageModule)
+    loadChildren: () =>
+      import('./veiw/veiw.module').then((m) => m.VeiwPageModule),
   },
-
 ];
 
 @NgModule({
