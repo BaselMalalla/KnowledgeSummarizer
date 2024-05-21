@@ -1,0 +1,51 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Favorites</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-list>
+    <ion-card *ngFor="let post of posts; let i = index" #card>
+      <ion-card-header (click)="goToDetails(post.id)">
+        <ion-card-title>{{ post.title }}</ion-card-title>
+        <ion-row>
+          <ion-col>
+            <ion-card-subtitle>{{ post.type }} by {{ post.username }}</ion-card-subtitle>
+          </ion-col>
+          <ion-item lines="none">
+            <ion-icon name="heart"></ion-icon>
+            <span>{{ post.likeCount }} Likes</span>
+            <ion-icon
+              name="star"
+              *ngFor="let star of [1, 2, 3, 4, 5]"
+              [color]="star <= post.rating ? 'primary' : 'medium'"
+            ></ion-icon>
+          </ion-item>
+        </ion-row>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="12">
+              <img [src]="post.image" alt="Post Image" />
+            </ion-col>
+            <ion-col size="12">
+              <ion-text>{{ post.content }}</ion-text>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12">
+              <p class="topics">
+                <ng-container *ngFor="let topic of post.topics; let i = index">
+                  {{ i !== 0 ? ', ' : '' }} #{{ topic }}
+                </ng-container>
+              </p>
+            </ion-col>
+            <ion-col>{{ post.date }}</ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
+</ion-content>

@@ -37,6 +37,14 @@ const routes: Routes = [
     path: 'post',
     loadChildren: () => import('./post/post.module').then( m => m.PostPageModule)
   },
+  {
+    path: 'fav',
+    loadChildren: () => import('./fav/fav.module').then( m => m.FavPageModule)
+  },
+  {
+    path: 'veiw',
+    loadChildren: () => import('./veiw/veiw.module').then( m => m.VeiwPageModule)
+  },
 
 ];
 
