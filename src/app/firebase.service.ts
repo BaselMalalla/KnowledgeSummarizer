@@ -1,6 +1,13 @@
 // @ts-nocheck
 import { Injectable } from '@angular/core';
 import { Firestore } from '@angular/fire/firestore';
+import {
+  Storage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+} from '@angular/fire/storage';
+
 // AngularFire
 import {
   collection,
@@ -25,13 +32,23 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class FirebaseService {
-  constructor(public firestore: Firestore) {
+  postsCollection: CollectionReference<DocumentData>;
+
+  constructor(public firestore: Firestore, public fbStorage: Storage) {
     this.postsCollection = collection(this.firestore, 'posts');
   }
 
-  postsCollection: CollectionReference<DocumenntData>;
+  async uploadImage(file: File, path: string): Promise<string> {
+    const storageRef = ref(this.fbStorage, path);
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+    return downloadURL;
+  }
 
   addPost(post): Promise<DocumentReference> {
     return addDoc(collection(this.firestore, 'posts'), post);
+  }
+  getPosts(): Observable<DocumentData[]> {
+    return collectionData(this.postsCollection);
   }
 }

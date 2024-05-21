@@ -9,11 +9,11 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { provideStorage, getStorage } from '@angular/fire/storage';
+
 import { ReactiveFormsModule } from '@angular/forms';
 import { provideAuth, getAuth } from '@angular/fire/auth';
-import    {    AngularFireAuthModule    }    from    '@angular/fire/compat/auth';
-
-
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAv_oEZf9avWn5_aTvW_t34XdnkGGpsveM',
@@ -32,11 +32,11 @@ const firebaseConfig = {
     IonicModule.forRoot(),
     AppRoutingModule,
     ReactiveFormsModule,
-    AngularFireAuthModule ,
+    AngularFireAuthModule,
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideFirestore(() => getFirestore()),
-    provideAuth(() => getAuth())
-
+    provideAuth(() => getAuth()),
+    provideStorage(() => getStorage()),
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
