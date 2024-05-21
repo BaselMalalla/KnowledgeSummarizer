@@ -1,47 +1,144 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>profile2</ion-title>
-
+    <ion-item slot="start" class="no-fill"> <h2>{{ username }}</h2></ion-item>
     <ion-buttons slot="end">
       <ion-button routerLink="/edit-profile">
-        <ion-text>edit profile</ion-text>
+        <ion-text>Edit Profile</ion-text>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-item>
-    <ion-label>Bio:</ion-label>
-  </ion-item>
-  <ion-item>
-    <ion-textarea>
-      this is my profile Mohamed ali alaradi CS student at the university of
-      bahrain
-    </ion-textarea>
-  </ion-item>
   <ion-card>
+    <!-- profile card -->
+    <ion-grid class="profile-grid">
+      <ion-row>
+        <ion-col size="6">
+          <ion-avatar class="custom-avatar">
+            <img
+              src="https://www.techiediaries.com/modern-angular.webp"
+              alt="Profile Image"
+            />
+          </ion-avatar>
+        </ion-col>
+
+        <ion-col size="3" class="stat-col">
+          <div class="stat">
+            <h3>{{ posts }}</h3>
+            <p>Posts</p>
+          </div>
+        </ion-col>
+        <ion-col size="3" class="stat-col">
+          <div class="stat">
+            <h3>{{ likes }}</h3>
+            <p>Likes</p>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <div class="profile-content">
+      <h3>Bio:</h3>
+      <p>{{ bio }}</p>
+    </div>
+  </ion-card>
+  <ion-card (click)="goToDetails()">
+    <!-- posts card -->
+
     <ion-card-header>
-      <ion-card-title>{{ email }}</ion-card-title>
+      <ion-card-title>{{title}}</ion-card-title>
+      <ion-row>
+        <ion-col>
+          <ion-card-subtitle>{{type}} by {{username}}</ion-card-subtitle>
+        </ion-col>
+        <ion-item>
+          <ion-icon name="heart"></ion-icon>
+          <span>{{likeCount}} Likes</span>
+          <ion-icon
+            name="star"
+            *ngFor="let star of stars; let i = index"
+            [color]="i < rating ? 'primary' : 'medium'"
+          ></ion-icon>
+        </ion-item>
+      </ion-row>
     </ion-card-header>
-
     <ion-card-content>
-      <ion-item>
-        <ion-label>Topics:</ion-label>
-        <ion-text>{{topics}}</ion-text>
-      </ion-item>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12"> </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12" size-md="6">
+            <img
+              src="https://www.techiediaries.com/modern-angular.webp"
+              alt="Post Image"
+            />
+          </ion-col>
+          <ion-col size="12" size-md="6">
+            <ion-text>{{content}}</ion-text>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <p class="topics">
+              <ng-container *ngFor="let topic of topics; let i = index">
+                {{ i !== 0 ? ', ' : '' }} #{{ topic }}
+              </ng-container>
+            </p>
+          </ion-col>
+          <ion-col>{{date}}</ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
 
-      <ion-item>
-        <ion-label>Title:</ion-label>
-        <ion-text>{{ title }}</ion-text>
-      </ion-item>
+  <ion-card (click)="goToDetails()">
+    <!-- posts card -->
 
-      <ion-item>
-        <ion-label>Summary:</ion-label>
-        <ion-text>{{ summary }}</ion-text>
-      </ion-item>
-
-      <ion-img alt="Image should be here" [src]="image"></ion-img>
+    <ion-card-header>
+      <ion-card-title>{{title}}</ion-card-title>
+      <ion-row>
+        <ion-col>
+          <ion-card-subtitle>{{type}} by {{username}}</ion-card-subtitle>
+        </ion-col>
+        <ion-item>
+          <ion-icon name="heart"></ion-icon>
+          <span>{{likeCount}} Likes</span>
+          <ion-icon
+            name="star"
+            *ngFor="let star of stars; let i = index"
+            [color]="i < rating ? 'primary' : 'medium'"
+          ></ion-icon>
+        </ion-item>
+      </ion-row>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12"> </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12" size-md="6">
+            <img
+              src="https://www.techiediaries.com/modern-angular.webp"
+              alt="Post Image"
+            />
+          </ion-col>
+          <ion-col size="12" size-md="6">
+            <ion-text>{{content}}</ion-text>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <p class="topics">
+              <ng-container *ngFor="let topic of topics; let i = index">
+                {{ i !== 0 ? ', ' : '' }} #{{ topic }}
+              </ng-container>
+            </p>
+          </ion-col>
+          <ion-col>{{date}}</ion-col>
+        </ion-row>
+      </ion-grid>
     </ion-card-content>
   </ion-card>
 </ion-content>
