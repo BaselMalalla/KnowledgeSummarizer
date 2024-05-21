@@ -1,0 +1,77 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>search</ion-title>
+    <ion-button slot="end" (click)="clearAll()">Clear all</ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-item>
+    <ion-label>Rating Range</ion-label>
+    <ion-range
+      dualKnobs="true"
+      min="1"
+      max="5"
+      step="0.25"
+      [(ngModel)]="ratingRange"
+    >
+      <ion-label slot="start">Min</ion-label>
+      <ion-label slot="end">Max</ion-label>
+    </ion-range>
+  </ion-item>
+  <ion-item>
+    <ion-label>Min Rating: {{ ratingRange.lower }}</ion-label>
+  </ion-item>
+  <ion-item>
+    <ion-label>Max Rating: {{ ratingRange.upper }}</ion-label>
+  </ion-item>
+  <form [formGroup]="filterForm" (ngSubmit)="applyFilter()">
+    <ion-item>
+      <ion-label>Start Time</ion-label>
+      <ion-datetime
+        display-format="h:mm A"
+        picker-format="h:mm A"
+        formControlName="startTime"
+      ></ion-datetime>
+      <ion-label>End Time</ion-label>
+      <ion-datetime
+        display-format="h:mm A"
+        picker-format="h:mm A"
+        formControlName="endTime"
+      ></ion-datetime>
+    </ion-item>
+
+    <ion-item>
+      <ion-segment formControlName="isRead">
+        <ion-segment-button value="Read">Read</ion-segment-button>
+        <ion-segment-button value="Unread">Unread</ion-segment-button>
+      </ion-segment>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Select Topic</ion-label>
+
+      <ion-select
+        formControlName="Topic"
+        multiple="true"
+        placeholder="Select browsers"
+      >
+        <ion-select-option>1</ion-select-option
+        ><ion-select-option>2</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-button expand="full" type="submit">Apply Filter</ion-button>
+  </form>
+  <ion-searchbar
+    (ionInput)="Search()"
+    [(ngModel)]="searchitem"
+    showCancelButton="never"
+  ></ion-searchbar>
+
+  <ion-card *ngFor="let check of FilteredList">
+    <ion-card-header>
+      <ion-card-title>{{check.name}}</ion-card-title>
+    </ion-card-header>
+  </ion-card>
+</ion-content>
