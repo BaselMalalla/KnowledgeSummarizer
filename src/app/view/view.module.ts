@@ -4,17 +4,12 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { VeiwPageRoutingModule } from './veiw-routing.module';
+import { ViewPageRoutingModule } from './view-routing.module';
 
-import { VeiwPage } from './veiw.page';
+import { ViewPage } from './view';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    VeiwPageRoutingModule
-  ],
-  declarations: [VeiwPage]
+  imports: [CommonModule, FormsModule, IonicModule, ViewPageRoutingModule],
+  declarations: [ViewPage],
 })
 export class VeiwPageModule {}
