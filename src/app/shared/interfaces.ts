@@ -1,4 +1,5 @@
 export interface Post {
+  author?: string; // remove "?" later
   type: string;
   topics: string[];
   title: string[];
@@ -8,5 +9,5 @@ export interface Post {
 
 export interface detail {
   summary: string;
-  image: File; // Use the File type to store/upload an image
+  images: File[];
 }

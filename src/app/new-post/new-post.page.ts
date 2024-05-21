@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { Post } from '../shared/interfaces';
 import { FirebaseService } from '../firebase.service';
-import { AlertController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-new-post',
@@ -15,7 +15,8 @@ export class NewPostPage {
   constructor(
     private fb: FormBuilder,
     private firebaseService: FirebaseService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private loadingController: LoadingController
   ) {
     this.postForm = this.fb.group({
       type: ['', Validators.required],
@@ -30,32 +31,30 @@ export class NewPostPage {
   }
 
   onImageSelected(event: any, index: number) {
-    const file = (event.target as HTMLInputElement)?.files?.[0];
-    if (file && this.detailsArray.at(index)) {
+    const files = (event.target as HTMLInputElement)?.files;
+    if (files && files.length > 0 && this.detailsArray.at(index)) {
+      const images = Array.from(files);
       this.detailsArray.at(index).patchValue({
-        image: file,
+        images: images,
       });
-      this.detailsArray.at(index).get('image')?.updateValueAndValidity();
+      this.detailsArray.at(index).get('images')?.updateValueAndValidity();
       console.log(this.detailsArray.at(index).value);
     }
   }
 
   async sanitizeFormData(formData: any): Promise<Post> {
     const { type, topicsString, title, detailsArray } = formData;
-    const topics = topicsString.split(',').map((topic: string) => topic.trim());
+    const topics = topicsString
+      .split(',')
+      .map((topic: string) => topic.trim())
+      .filter((topic: string) => topic.trim().length > 0);
 
-    // Upload images and replace file objects with URLs
     for (let detail of detailsArray) {
-      if (detail.image) {
-        const filePath = `images/${new Date().getTime()}_${detail.image.name}`;
-        const imageURL = await this.firebaseService.uploadImage(
-          detail.image,
-          filePath
-        );
-        detail.image = imageURL;
+      if (detail.images && detail.images.length > 0) {
+        const uploadedImagesUrls = await this.uploadImages(detail.images);
+        detail.images = uploadedImagesUrls;
       }
     }
-
     const newPost: Post = {
       type,
       topics,
@@ -67,26 +66,48 @@ export class NewPostPage {
     return newPost;
   }
 
+  async uploadImages(images: any[]): Promise<string[]> {
+    const uploadedImagesUrls = [];
+    for (let image of images) {
+      const filePath = `images/${new Date().getTime()}_${image.name}`;
+      const imageURL = await this.firebaseService.uploadImage(image, filePath);
+      uploadedImagesUrls.push(imageURL);
+    }
+    return uploadedImagesUrls;
+  }
+
   async onSubmit() {
     if (this.postForm.valid) {
+      const loading = await this.loadingController.create({
+        message: 'Uploading post...',
+      });
+      await loading.present();
       const newPost = await this.sanitizeFormData(this.postForm.value);
       try {
         await this.firebaseService.addPost(newPost);
+        this.showAlert('Success', 'Post created successfully');
+        this.clearForm();
       } catch (err) {
         this.showAlert('Error', 'Failed to create a new post');
         console.error('Failed to create a new post', err);
+      } finally {
+        await loading.dismiss();
       }
-      // Handle form submission here
-      this.postForm.reset();
     } else {
       console.log('Form is invalid');
     }
   }
 
+  clearForm() {
+    this.postForm.reset();
+    this.clearDetailsArray();
+    this.addDetail();
+  }
+
   createDetailGroup(): FormGroup {
     return this.fb.group({
       summary: ['', Validators.required],
-      image: [null],
+      images: [[]],
     });
   }
   get detailsArray(): FormArray {

@@ -34,16 +34,34 @@
             </ion-item>
           </ion-radio-group>
         </ion-item>
+        <ion-note
+          *ngIf="postForm.get('type')?.touched && postForm.get('type')?.invalid"
+          color="danger"
+        >
+          Please select a type.
+        </ion-note>
         <ion-item>
           <ion-label position="floating"
             >Topic(s) separate them by comma</ion-label
           >
           <ion-input formControlName="topicsString"></ion-input>
         </ion-item>
+        <ion-note
+          *ngIf="postForm.get('topicsString')?.touched && postForm.get('topicsString')?.invalid"
+          color="danger"
+        >
+          Please enter at least one topic.
+        </ion-note>
         <ion-item>
           <ion-label position="floating">Title</ion-label>
           <ion-input formControlName="title"></ion-input>
         </ion-item>
+        <ion-note
+          *ngIf="postForm.get('title')?.touched && postForm.get('title')?.invalid"
+          color="danger"
+        >
+          Please enter a title.
+        </ion-note>
 
         <div formArrayName="detailsArray">
           <div>
@@ -55,11 +73,18 @@
                 <ion-label position="floating">Summary {{ i + 1 }}</ion-label>
                 <ion-textarea formControlName="summary"></ion-textarea>
               </ion-item>
+              <ion-note
+                *ngIf="detail.get('summary')?.touched && detail.get('summary')?.invalid"
+                color="danger"
+              >
+                Please enter a summary.
+              </ion-note>
               <ion-item>
-                <ion-label position="floating">Image</ion-label>
+                <ion-label position="floating">Images</ion-label>
                 <ion-input
                   type="file"
                   (change)="onImageSelected($event, i)"
+                  multiple
                 ></ion-input>
               </ion-item>
               <ion-button *ngIf="i>=1" (click)="removeDetail(i)" color="danger"
