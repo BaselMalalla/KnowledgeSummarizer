@@ -1,0 +1,138 @@
+.profile-grid {
+    padding: 20px;
+  }
+  
+  .profile-info h2 {
+    font-size: 24px;
+    margin: 0;
+  }
+  
+  .stat-col {
+    position: relative;
+  }
+  
+  .stat-col:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background-color: #ccc; /* Adjust color as needed */
+  }
+  
+  .stat {
+    text-align: center;
+  }
+  
+  .stat h3 {
+    margin: 0;
+    font-size: 20px;
+  }
+  
+  .stat p {
+    margin: 0;
+    font-size: 16px;
+    color: #666;
+  }
+  
+  .profile-content {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+  }
+  
+  .profile-content h3 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .profile-content p {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .no-fill {
+    --background: transparent;
+  }
+  
+  .custom-avatar {
+    width: 100px; 
+    height: 100px;
+  }
+  ion-card-content {
+    padding: 16px;
+  }
+  
+  ion-card-title {
+    font-weight: bold;
+  }
+  
+  ion-card-subtitle {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  ion-text {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  
+  .topics {
+    font-size: 14px;
+    color: #777;
+    margin-top: 8px;
+  }
+  ion-card-content {
+    padding: 16px;
+  }
+  
+  ion-card-title {
+    font-weight: bold;
+  }
+  
+  ion-card-subtitle {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  ion-text {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  
+  .topics {
+    font-size: 14px;
+    color: #777;
+    margin-top: 8px;
+  }
+  
+  .like-section {
+    display: flex;
+    align-items: center;
+    margin-top: 16px;
+  }
+  
+  .like-section ion-icon {
+    margin-right: 8px;
+  }
+  
+  ion-item {
+    --background: transparent;
+    --padding-start: 0;
+  }
+
+
+  .trash-can {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    color: red;
+  }
+  
+  .dragging {
+    opacity: 0.6;
+  }
+  

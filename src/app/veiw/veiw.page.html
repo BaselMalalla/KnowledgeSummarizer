@@ -1,47 +1,10 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-item slot="start" class="no-fill">
-      <h2>{{ username }}</h2>
-    </ion-item>
-    <ion-buttons slot="end">
-      <ion-button routerLink="/edit-profile">
-        <ion-text>Edit Profile</ion-text>
-      </ion-button>
-    </ion-buttons>
+    <ion-title>Home</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-grid class="profile-grid">
-    <ion-row>
-      <ion-col size="6">
-        <ion-avatar class="custom-avatar">
-          <img src="https://www.techiediaries.com/modern-angular.webp" alt="Profile Image" />
-        </ion-avatar>
-      </ion-col>
-      <ion-col size="3" class="stat-col">
-        <div class="stat">
-          <h3>{{ postCount }}</h3> <!-- Updated to postCount -->
-          <p>Posts</p>
-        </div>
-      </ion-col>
-      <ion-col size="3" class="stat-col">
-        <div class="stat">
-          <h3>{{ likes }}</h3>
-          <p>Likes</p>
-        </div>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-  <div class="profile-content">
-    <h3>Bio:</h3>
-    <p>{{ bio }}</p>
-  </div>
-
-  <div class="trash-can" #trashCan>
-    <ion-icon name="trash-bin" size="large"></ion-icon>
-  </div>
-
   <ion-list>
     <ion-card *ngFor="let post of posts; let i = index" #card>
       <ion-card-header (click)="goToDetails(post.id)">
@@ -50,7 +13,7 @@
           <ion-col>
             <ion-card-subtitle>{{ post.type }} by {{ post.username }}</ion-card-subtitle>
           </ion-col>
-          <ion-item>
+          <ion-item lines="none">
             <ion-icon name="heart"></ion-icon>
             <span>{{ post.likeCount }} Likes</span>
             <ion-icon

@@ -1,0 +1,70 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/profile"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ post?.title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div *ngIf="post">
+    <div class="post-header">
+      <h1>{{ post.title }}</h1>
+      <p class="meta">
+        <span>{{ post.type }} by {{ post.username }}</span>
+        <span>{{ post.date }}</span>
+      </p>
+    </div>
+    <img [src]="post.image" alt="Post Image" class="post-image" />
+    <div class="post-content">
+      <p>{{ post.content }}</p>
+      <p class="topics">
+        <ng-container *ngFor="let topic of post.topics; let i = index">
+          {{ i !== 0 ? ', ' : '' }} #{{ topic }}
+        </ng-container>
+      </p>
+    </div>
+    <div class="post-meta">
+      <ion-item lines="none" (click)="toggleLike()" class="like-item">
+        <ion-icon [name]="userLiked ? 'heart' : 'heart-outline'"></ion-icon>
+        <span>{{ post.likeCount }} Likes</span>
+      </ion-item>
+      <ion-item lines="none" class="rating-item">
+        <ion-label>{{ post.rating.toFixed(1) }} / 5</ion-label>
+        <div class="rating-stars">
+          <ion-icon
+            name="star"
+            *ngFor="let star of [1, 2, 3, 4, 5]"
+            (click)="setPersonalRating(star)"
+            [color]="star <= personalRating ? 'primary' : 'medium'"
+          ></ion-icon>
+        </div>
+      </ion-item>
+    </div>
+
+    <div class="comments-section">
+      <h2>Comments</h2>
+      <ion-item>
+        <ion-input
+          [(ngModel)]="newComment"
+          placeholder="Add a comment"
+        ></ion-input>
+        <ion-button (click)="addComment()">Post</ion-button>
+      </ion-item>
+      <ion-card class="comment-card">
+        <ion-card-content>
+          <ion-list>
+            <ion-item *ngFor="let comment of comments">
+              <ion-label>
+                <h3>{{ comment.username }}</h3>
+                <p>{{ comment.content }}</p>
+                <p class="comment-date">{{ comment.date }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>
