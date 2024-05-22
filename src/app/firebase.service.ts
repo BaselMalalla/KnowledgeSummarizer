@@ -48,7 +48,10 @@ export class FirebaseService {
   addPost(post): Promise<DocumentReference> {
     return addDoc(collection(this.firestore, 'posts'), post);
   }
-  getPosts(): Observable<DocumentData[]> {
-    return collectionData(this.postsCollection);
+  addUser(user): Promise<DocumentReference> {
+    return addDoc(collection(this.firestore, 'users'), user);
   }
+  // getPosts(): Observable<DocumentData[]> {
+  //   return collectionData(this.postsCollection);
+  // }
 }

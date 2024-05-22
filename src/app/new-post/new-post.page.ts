@@ -1,8 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
-import { Post } from '../shared/interfaces';
+import { Post, Rating, Comment } from '../shared/interfaces';
 import { FirebaseService } from '../firebase.service';
 import { AlertController, LoadingController } from '@ionic/angular';
+import {
+  Auth,
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+} from '@angular/fire/auth';
+import { Firestore } from '@angular/fire/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 
 @Component({
   selector: 'app-new-post',
@@ -16,7 +25,8 @@ export class NewPostPage {
     private fb: FormBuilder,
     private firebaseService: FirebaseService,
     private alertController: AlertController,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    public auth: Auth
   ) {
     this.postForm = this.fb.group({
       type: ['', Validators.required],
@@ -55,12 +65,21 @@ export class NewPostPage {
         detail.images = uploadedImagesUrls;
       }
     }
+    const likedBy: string[] = [];
+    const ratings: Rating[] = [];
+    const comments: Comment[] = [];
+    const auth = getAuth();
+    const userId = auth.currentUser?.uid;
     const newPost: Post = {
+      authorId: userId || '',
       type,
       topics,
       title,
       date: new Date(),
       detailsArray,
+      likedBy,
+      comments,
+      ratings,
     };
     console.log(newPost);
     return newPost;

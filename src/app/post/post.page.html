@@ -3,12 +3,13 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/profile"></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ post?.title }}</ion-title>
+    <!-- <ion-title>{{ post?.title }}</ion-title> -->
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div *ngIf="post">
+  <!-- {{ post | async}} -->
+  <!--<div *ngIf="post">
     <div class="post-header">
       <h1>{{ post.title }}</h1>
       <p class="meta">
@@ -66,5 +67,5 @@
         </ion-card-content>
       </ion-card>
     </div>
-  </div>
+  </div> -->
 </ion-content>

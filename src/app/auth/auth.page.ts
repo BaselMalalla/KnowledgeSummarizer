@@ -1,3 +1,5 @@
+// fix the alert message
+
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
@@ -6,11 +8,12 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
-  sendSignInLinkToEmail,
 } from '@angular/fire/auth';
 import { Firestore } from '@angular/fire/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { Router } from '@angular/router';
+import { FirebaseService } from '../firebase.service';
+import { User } from '../shared/interfaces';
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.page.html',
@@ -23,6 +26,7 @@ export class AuthPage implements OnInit {
   constructor(
     private fb: FormBuilder,
     public firestore: Firestore,
+    private firebaseService: FirebaseService,
     public auth: Auth,
     private router: Router
   ) {
@@ -46,13 +50,12 @@ export class AuthPage implements OnInit {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // User is signed in, redirect to home page
-        this.router.navigate(['/home']);
-        // alert('welcome user is signed in ');
+        console.log(user);
+        this.router.navigate(['/view']);
+        alert('welcome user is signed in ');
       } else {
-        // No user is signed in, redirect to sign up page
         this.router.navigate(['/auth']);
-        // alert('user is not signed in please sign in ');
+        alert('user is not signed in please sign in ');
       }
     });
   }
@@ -62,14 +65,12 @@ export class AuthPage implements OnInit {
 
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed in
         const user = userCredential.user;
-        // ...
+        this.router.navigate(['/view']);
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        // Handle errors here
       });
   }
 
@@ -79,30 +80,34 @@ export class AuthPage implements OnInit {
     signOut(auth)
       .then(() => {
         // Sign-out successful.
+        this.router.navigate(['/auth']);
+        alert('signed out succesfully');
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        // Handle errors here
       });
   }
 
   signup() {
     const auth = getAuth();
-    console.log(this.signupForm.value);
+    console.log(auth);
     const { email, password } = this.signupForm.value;
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed up
         const user = userCredential.user;
-        // ...
-        this.router.navigate(['/home']);
+        const { username } = this.signupForm.value;
+        const userId = user.uid;
+        const bio = '';
+        const readPosts: string[] = [];
+        const userObj: User = { username, userId, bio, readPosts };
+        this.firebaseService.addUser(userObj);
+        this.router.navigate(['/view']);
         alert('signed up succesfully');
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        // ..
         console.error(errorCode, errorMessage);
         alert('signed up failed: ' + errorMessage);
       });
