@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Injectable } from '@angular/core';
-import { Firestore } from '@angular/fire/firestore';
+import { Firestore, getDoc } from '@angular/fire/firestore';
 import {
   Storage,
   ref,
@@ -41,39 +41,56 @@ export class DataQueryService {
       map((posts) => posts as Post[])
     );
   }
-  // getPost(id: string): Observable<Post> {
-  //   console.log(id);
-  //   const postDocRef = doc(this.firestore, id);
-  //   return docData(postDocRef, { idField: 'id' }).pipe(
-  //     map((post) => post as Post)
-  //   );
-  // }
 
-  // getPost(id: string): Observable<Post> {
-  //   const document = doc(this.firestore, `posts/id`);
-  //   return docSnapshots(document).pipe(
-  //     map((doc) => {
-  //       const id = doc.id;
-  //       const data = doc.data();
-  //       return { id, ...data } as Post;
-  //     })
-  //   );
-  // }
-
-  getPost(id: string): Observable<Post> {
-    const postsCollection = collection(this.firestore, 'posts');
-    const q = query(postsCollection, where('__name__', '==', id));
-    return collectionData(q, { idField: 'id' }).pipe(
-      map((posts) => (posts.length ? (posts[0] as Post) : null))
-    );
+  async getPost(id) {
+    const docRef = doc(this.firestore, 'posts', id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      console.log('Document data:', docSnap.data());
+      return docSnap.data();
+    } else {
+      console.log('No such document!');
+    }
   }
-  // getPost(id): Observable<Post> {
-  //   const noteDocRef = doc(this.firestore, `posts/${id}`);
-  //   return docData(noteDocRef, { idField: 'id' }) as Observable<Post>;
+
+  async deletePost(id) {
+    const docRef = doc(this.firestore, 'posts', id);
+    await deleteDoc(docRef, data);
+    console.log('Document successfully deleted!');
+  }
+
+  async updatePost(id, data) {
+    const docRef = doc(this.firestore, 'posts', id);
+    await updateDoc(docRef, data);
+    console.log('Document successfully updated!');
+  }
+
+  // async getUser(userId: string) {
+  //   q = query(
+  //     collection(this.firestore, 'users'),
+  //     where('userId', '==', userId)
+  //   );
+  //   const docSnap = await getDoc(q);
+  //   if (docSnap.exists()) {
+  //     console.log('Document data:', docSnap.data());
+  //     return docSnap.data();
+  //   } else {
+  //     console.log('No such document!');
+  //   }
   // }
 
-  // async getDocument(id: string) {
-  //   const docSnap = await getDoc(doc(this.firestore, 'posts', id));
-  //   return docSnap;
-  // }
+  async getUser(userId: string) {
+    return new Promise(async (resolve, reject) => {
+      const q = query(
+        collection(this.firestore, 'Users'),
+        where('userId', '==', userId)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach((doc: any) => {
+        resolve(doc.data());
+      });
+    });
+  }
 }

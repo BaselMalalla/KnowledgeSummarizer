@@ -3,18 +3,19 @@
 
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Post, Rating } from '../shared/interfaces';
+import { Post, User, Rating, Comment } from '../shared/interfaces';
 import { DataQueryService } from '../data-query.service';
 import { Observable } from 'rxjs';
-
+import { DocumentData } from 'firebase/firestore';
+import { convertFirebaseDate, calculateRatingsAvg } from '../shared/utils';
 import { ActivatedRoute } from '@angular/router';
-
-interface Comment {
-  id: number;
-  username: string;
-  content: string;
-  date: string;
-}
+import {
+  Auth,
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+} from '@angular/fire/auth';
 
 @Component({
   selector: 'app-post',
@@ -22,89 +23,141 @@ interface Comment {
   styleUrls: ['./post.page.scss'],
 })
 export class PostPage implements OnInit {
-  // post: any;
+  constructor(
+    private route: ActivatedRoute,
+    private dataQueryService: DataQueryService,
+    public auth: Auth
+  ) {
+    this.route.queryParams.subscribe((params) => {
+      this.postId = params['id'];
+    });
+    this.userId = this.getCurrentUserId();
+  }
+  convertFirebaseDate = convertFirebaseDate;
+  calculateRatingsAvg = calculateRatingsAvg;
+
+  userId: string;
   personalRating: number = 0;
   userLiked: boolean = false;
   newComment: string = '';
-  comments: Comment[] = [
-    {
-      id: 1,
-      username: 'user1',
-      content: 'Great post!',
-      date: new Date().toLocaleDateString(),
-    },
-    {
-      id: 2,
-      username: 'user2',
-      content: 'Thanks for sharing!',
-      date: new Date().toLocaleDateString(),
-    },
-  ];
 
-  // posts = [
-  //   {
-  //     id: 1,
-  //     title: 'Ionic 4 Tutorial',
-  //     type: 'article',
-  //     username: 'mrmaradi',
-  //     content:
-  //       'This is a tutorial on Ionic 4. Ionic 4 is a powerful framework for building cross-platform mobile applications using web technologies such as HTML, CSS, and JavaScript. It provides a wide range of UI components, native device features integration, and seamless performance. With Ionic 4, developers can create beautiful and highly functional mobile apps that run on iOS, Android, and the web. This tutorial will guide you through the process of getting started with Ionic 4, exploring its key features, and building your first mobile app.',
-  //     likeCount: 50,
-  //     rating: 4.2,
-  //     topics: ['Angular', 'Ionic', 'Web Development'],
-  //     date: new Date().toLocaleDateString(),
-  //     image: 'https://www.techiediaries.com/modern-angular.webp',
-  //   },
-  //   {
-  //     id: 2,
-  //     title: 'Another Post',
-  //     type: 'blog',
-  //     username: 'johndoe',
-  //     content: 'Content of another post...',
-  //     likeCount: 30,
-  //     rating: 3.7,
-  //     topics: ['React', 'JavaScript'],
-  //     date: new Date().toLocaleDateString(),
-  //     image: 'https://www.techiediaries.com/modern-angular.webp',
-  //   },
-  // ];
-  public post: Observable<Post[]>;
-  constructor(
-    private route: ActivatedRoute,
-    private dataQueryService: DataQueryService
-  ) {
-    this.post = this.dataQueryService.getPost(this.postId);
-  }
+  public post!: Post;
+  postId!: string | null;
 
-  postId = '';
   ngOnInit() {
-    this.route.queryParams.subscribe((params) => {
-      const postId = +params['id'];
-    });
+    this.userId = this.getCurrentUserId();
   }
 
+  ionViewWillEnter() {
+    this.loadPost();
+  }
+
+  async loadPost() {
+    if (this.postId) {
+      alert(this.postId + ' from ionViewWillEnter');
+      const doc = await this.dataQueryService.getPost(this.postId);
+      this.post = this.accessPostParts(doc) as Post;
+      console.log(this.userId);
+    }
+  }
+
+  accessPostParts(document: any): Post {
+    const {
+      authorId,
+      comments,
+      date,
+      detailsArray,
+      likedBy,
+      ratings,
+      title,
+      topics,
+      type,
+    } = document;
+
+    return {
+      authorId,
+      comments,
+      date,
+      detailsArray,
+      likedBy,
+      ratings,
+      title,
+      topics,
+      type,
+    };
+  }
+
+  async getUsernameById(userId: string) {
+    const user = await this.getUser(userId);
+    return user.username;
+  }
+
+  accessUserParts(document: any): User {
+    const { username, userId, bio, readPosts } = document;
+
+    return {
+      username,
+      userId,
+      bio,
+      readPosts,
+    };
+  }
+
+  async getUser(userId: string) {
+    const doc = await this.dataQueryService.getUser(userId);
+    const user = this.accessUserParts(doc) as User;
+    console.log(user);
+    return user;
+  }
+  getCurrentUserId(): string {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+      return user.uid;
+    } else {
+      return '';
+    }
+  }
   toggleLike() {
-    // this.userLiked = !this.userLiked;
-    // if (this.userLiked) {
-    //   this.post.likeCount++;
-    // } else {
-    //   this.post.likeCount--;
-    // }
+    if (this.userId) {
+      this.userLiked = !this.userLiked;
+      if (this.userLiked) {
+        this.post.likedBy.push(this.userId);
+      } else {
+        this.post.likedBy.pop();
+      }
+      console.log(this.post.likedBy);
+    } else {
+      alert('You must be logged in to like a post');
+    }
+    // Update db
+  }
+  setPersonalRating(star: number) {
+    let rating = this.post.ratings.find((r) => r.userId === this.userId);
+    if (rating) {
+      rating.value = star;
+    } else {
+      this.post.ratings.push({ userId: this.userId, value: star });
+    }
+    // Update db
+    // this.postService.updatePost(this.post).subscribe(updatedPost => {
+    //   this.post = updatedPost;
+    //   this.personalRating = star;
+    // });
   }
 
-  setPersonalRating(rating: number) {
-    this.personalRating = rating;
+  getPersonalRating(): number {
+    const rating = this.post.ratings.find((r) => r.userId === this.userId);
+    return rating ? rating.value : 0;
   }
 
   addComment() {
     if (this.newComment.trim()) {
-      const newComment: Comment = {
-        id: this.comments.length + 1,
-        username: 'currentUser', // Replace with actual username
+      const newCommentObject: Comment = {
+        userId: this.getCurrentUserId(),
         content: this.newComment,
-        date: new Date().toLocaleDateString(),
       };
-      this.comments.push(newComment);
+      this.post.comments.push(newCommentObject);
       this.newComment = '';
     }
   }

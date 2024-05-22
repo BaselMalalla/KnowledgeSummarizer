@@ -19,7 +19,7 @@
             <ion-icon
               name="star"
               *ngFor="let star of [1, 2, 3, 4, 5]"
-              [color]="star <= calculateRatingAvg(post.ratings) ? 'primary' : 'medium'"
+              [color]="star <= calculateRatingsAvg(post.ratings) ? 'primary' : 'medium'"
             ></ion-icon>
           </ion-item>
         </ion-row>
@@ -42,7 +42,7 @@
                 </ng-container>
               </p>
             </ion-col>
-            <ion-col> {{convertDate(post.date) }}</ion-col>
+            <ion-col> {{convertFirebaseDate(post.date) }}</ion-col>
           </ion-row>
         </ion-grid>
       </ion-card-content>

@@ -12,7 +12,7 @@ export interface Post {
 }
 export interface Detail {
   summary: string;
-  images: File[];
+  images: File[] | string[];
 }
 
 export interface Comment {
