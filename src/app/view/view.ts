@@ -7,13 +7,14 @@ import { Observable } from 'rxjs';
 import { convertFirebaseDate, calculateRatingsAvg } from '../shared/utils';
 import { PostService } from '../services/post.service';
 import { UserService } from '../services/user.service';
+import { ViewWillEnter } from '@ionic/angular';
 
 @Component({
   selector: 'app-view',
   templateUrl: './view.page.html',
   styleUrls: ['./view.page.scss'],
 })
-export class ViewPage implements OnInit {
+export class ViewPage implements ViewWillEnter, OnInit {
   // imported functions
   convertFirebaseDate = convertFirebaseDate;
   calculateRatingsAvg = calculateRatingsAvg;
@@ -25,10 +26,10 @@ export class ViewPage implements OnInit {
     private userService: UserService
   ) {}
   async ngOnInit(): Promise<void> {
-    await this.postService.getPostsCopy();
-    this.posts = this.postService.posts;
+    // await this.postService.getPostsCopy();
+    // this.posts = this.postService.posts;
   }
-  async onViewWillEnter() {
+  async ionViewWillEnter() {
     await this.postService.getPostsCopy();
     this.posts = this.postService.posts;
   }

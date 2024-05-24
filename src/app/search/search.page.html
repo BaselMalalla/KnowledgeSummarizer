@@ -14,35 +14,18 @@
       max="5"
       step="0.25"
       [(ngModel)]="ratingRange"
+      (ionChange)="onRangeChange($event)"
     >
       <ion-label slot="start">Min</ion-label>
       <ion-label slot="end">Max</ion-label>
     </ion-range>
   </ion-item>
   <ion-item>
-    <ion-label>Min Rating: {{ ratingRange.lower }}</ion-label
-    ><ion-label>Max Rating: {{ ratingRange.upper }}</ion-label>
+    <ion-label>Min Rating: {{ ratingRange.lower }}</ion-label>
+    <ion-label>Max Rating: {{ ratingRange.upper }}</ion-label>
   </ion-item>
 
   <form [formGroup]="filterForm" (ngSubmit)="applyFilter()">
-    <ion-item lines="none">
-      <ion-label>Start Time</ion-label>
-      <ion-label>End Time</ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-datetime
-        display-format="h:mm A"
-        picker-format="h:mm A"
-        formControlName="startTime"
-      ></ion-datetime>
-
-      <ion-datetime
-        display-format="h:mm A"
-        picker-format="h:mm A"
-        formControlName="endTime"
-      ></ion-datetime>
-    </ion-item>
-
     <ion-item>
       <ion-segment formControlName="isRead">
         <ion-segment-button value="Read">Read</ion-segment-button>
@@ -54,26 +37,68 @@
       <ion-label>Select Topic</ion-label>
 
       <ion-select
-        formControlName="Topic"
+        formControlName="topics"
         multiple="true"
-        placeholder="Select browsers"
+        placeholder="Select topics"
       >
-        <ion-select-option>1</ion-select-option
-        ><ion-select-option>2</ion-select-option>
+        <ion-select-option *ngFor="let topic of getAllTopics()"
+          >{{ topic }}</ion-select-option
+        >
       </ion-select>
     </ion-item>
 
     <ion-button expand="full" type="submit">Apply Filter</ion-button>
   </form>
-  <ion-searchbar
-    (ionInput)="Search()"
-    [(ngModel)]="searchitem"
-    showCancelButton="never"
-  ></ion-searchbar>
 
-  <ion-card *ngFor="let check of FilteredList">
-    <ion-card-header>
-      <ion-card-title>{{check.name}}</ion-card-title>
-    </ion-card-header>
-  </ion-card>
+  <ion-list>
+    <ion-searchbar
+      (ionInput)="Search()"
+      [(ngModel)]="searchitem"
+      showCancelButton="never"
+    ></ion-searchbar>
+    <ion-card *ngFor="let post of filteredPosts; let i = index" #card>
+      <ion-card-header (click)="goToDetails(post.id)">
+        <ion-card-title>{{ post.title }}</ion-card-title>
+        <ion-row>
+          <ion-col>
+            <ion-card-subtitle
+              >{{ post.type }} by {{ getUsernameById(post.authorId)
+              }}</ion-card-subtitle
+            >
+          </ion-col>
+          <ion-item lines="none">
+            <ion-icon name="heart"></ion-icon>
+            <span>{{ post.likedBy.length }} Likes</span>
+            <ion-icon
+              name="star"
+              *ngFor="let star of [1, 2, 3, 4, 5]"
+              [color]="star <= calculateRatingsAvg(post.ratings) ? 'primary' : 'medium'"
+            ></ion-icon>
+          </ion-item>
+        </ion-row>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="12">
+              <img [src]="post.detailsArray[0].images[0]" alt="Post Image" />
+            </ion-col>
+            <ion-col size="12">
+              <ion-text>{{ post.detailsArray[0].summary }}</ion-text>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12">
+              <p class="topics">
+                <ng-container *ngFor="let topic of post.topics; let i = index">
+                  {{ i !== 0 ? ', ' : '' }} #{{ topic }}
+                </ng-container>
+              </p>
+            </ion-col>
+            <ion-col>{{ convertFirebaseDate(post.date) }}</ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
 </ion-content>

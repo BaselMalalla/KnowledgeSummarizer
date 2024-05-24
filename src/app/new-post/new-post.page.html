@@ -1,36 +1,39 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Create a new post</ion-title>
+    <ion-title>Create a New Post</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="ion-padding">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">NewPost</ion-title>
+      <ion-title size="large">New Post</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <form [formGroup]="postForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="postForm" (ngSubmit)="onSubmit()" class="post-form">
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Post</ion-card-title>
+        <ion-card-title>Post Details</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-item>
-          <ion-title>Type:</ion-title>
-          <ion-radio-group formControlName="type">
-            <ion-item>
+        <ion-item lines="full">
+          <ion-label class="form-label">Type:</ion-label>
+          <ion-radio-group
+            formControlName="type"
+            class="horizontal-radio-group"
+          >
+            <ion-item lines="none">
               <ion-label>Idea</ion-label>
-              <ion-radio slot="end" value="idea"></ion-radio>
+              <ion-radio slot="start" value="idea"></ion-radio>
             </ion-item>
-            <ion-item>
+            <ion-item lines="none">
               <ion-label>Book</ion-label>
-              <ion-radio slot="end" value="book"></ion-radio>
+              <ion-radio slot="start" value="book"></ion-radio>
             </ion-item>
-            <ion-item>
+            <ion-item lines="none">
               <ion-label>Article</ion-label>
-              <ion-radio slot="end" value="article"></ion-radio>
+              <ion-radio slot="start" value="article"></ion-radio>
             </ion-item>
           </ion-radio-group>
         </ion-item>
@@ -40,9 +43,10 @@
         >
           Please select a type.
         </ion-note>
-        <ion-item>
+
+        <ion-item lines="full">
           <ion-label position="floating"
-            >Topic(s) separate them by comma</ion-label
+            >Topic(s) (separate them by comma)</ion-label
           >
           <ion-input formControlName="topicsString"></ion-input>
         </ion-item>
@@ -52,7 +56,8 @@
         >
           Please enter at least one topic.
         </ion-note>
-        <ion-item>
+
+        <ion-item lines="full">
           <ion-label position="floating">Title</ion-label>
           <ion-input formControlName="title"></ion-input>
         </ion-item>
@@ -63,13 +68,13 @@
           Please enter a title.
         </ion-note>
 
-        <div formArrayName="detailsArray">
+        <div formArrayName="detailsArray" class="details-array">
           <div>
             <div
               *ngFor="let detail of detailsArray.controls; let i = index"
               [formGroupName]="i"
             >
-              <ion-item>
+              <ion-item lines="full">
                 <ion-label position="floating">Summary {{ i + 1 }}</ion-label>
                 <ion-textarea
                   formControlName="summary"
@@ -82,7 +87,7 @@
               >
                 Please enter a summary.
               </ion-note>
-              <ion-item>
+              <ion-item lines="full">
                 <ion-label position="floating">Images</ion-label>
                 <ion-input
                   type="file"
@@ -90,7 +95,10 @@
                   multiple
                 ></ion-input>
               </ion-item>
-              <ion-button *ngIf="i>=1" (click)="removeDetail(i)" color="danger"
+              <ion-button
+                *ngIf="i >= 1"
+                (click)="removeDetail(i)"
+                color="danger"
                 >Remove</ion-button
               >
             </div>
@@ -107,7 +115,7 @@
           >Get Posted</ion-button
         >
         <ion-button expand="block" (click)="onSelectCombSummary()"
-          >let selects & combine summaries</ion-button
+          >Select & Combine Summaries</ion-button
         >
       </ion-card-content>
     </ion-card>

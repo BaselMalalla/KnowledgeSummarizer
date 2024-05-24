@@ -131,4 +131,12 @@ export class PostService {
   getTotalLikes(posts: Post[]): number {
     return posts.reduce((acc, post) => acc + post.likedBy.length, 0);
   }
+
+  getAllTopics(): string[] {
+    const topics = new Set<string>();
+    this.posts.forEach((post) =>
+      post.topics.forEach((topic) => topics.add(topic))
+    );
+    return Array.from(topics);
+  }
 }

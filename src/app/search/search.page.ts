@@ -1,16 +1,25 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { FirebaseService } from '../services/firebase.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavController } from '@ionic/angular';
-interface checking {
-  name: string;
-}
+import { convertFirebaseDate, calculateRatingsAvg } from '../shared/utils';
+import { PostService } from '../services/post.service';
+import { UserService } from '../services/user.service';
+import { Post } from '../shared/interfaces';
+
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',
   styleUrls: ['./search.page.scss'],
 })
-export class SearchPage implements OnInit {
+export class SearchPage {
+  convertFirebaseDate = convertFirebaseDate;
+  calculateRatingsAvg = calculateRatingsAvg;
+
+  public posts: Post[] = [];
+  public filteredPosts: Post[] = [];
+
   ratingRange: any = {
     lower: 1,
     upper: 5,
@@ -18,56 +27,87 @@ export class SearchPage implements OnInit {
   minRating: number = 1;
   maxRating: number = 5;
   filterForm: FormGroup;
-  selectedDay: string = '';
   searchitem = '';
-  FilteredList: checking[] = [];
-  List: checking[] = [
-    { name: 'ali' },
-    { name: 'mohamed' },
-    { name: 'ahmed' },
-    { name: 'hassan ' },
-  ];
 
   constructor(
     public firebaseService: FirebaseService,
     private fb: FormBuilder,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private router: Router,
+    private postService: PostService,
+    private userService: UserService
   ) {
-    this.FilteredList = this.List;
+    this.posts = this.postService.posts;
+    this.filteredPosts = this.posts;
     this.filterForm = this.fb.group({
-      startTime: ['', [Validators.required]],
-      endTime: ['', [Validators.required]],
       isRead: ['', [Validators.required]],
-      Topic: ['', [Validators.required]],
+      topics: [[], [Validators.required]],
     });
   }
-
-  ngOnInit() {}
 
   Search() {
     const searchTerm = this.searchitem.toLowerCase();
-    this.FilteredList = this.List.filter((item) => {
-      return item.name.toLowerCase().startsWith(searchTerm);
+    this.filteredPosts = this.posts.filter((post) => {
+      return post.title.toLowerCase().startsWith(searchTerm);
     });
   }
+
   clearAll() {
     this.searchitem = '';
     this.ratingRange = { lower: 1, upper: 5 };
-
-    this.filterForm.reset({ startTime: '', endTime: '' });
+    this.filterForm.reset({ isRead: '', topic: [] });
+    this.filteredPosts = this.posts; // Reset to original posts
   }
+
   applyFilter() {
-    const filters = {
-      ...this.filterForm.value,
-      day: this.selectedDay,
-    };
-    // Pass filters to the search page or service
-    console.log('Applied Filters:', filters);
-    this.navCtrl.back();
+    const { isRead, topics } = this.filterForm.value;
+    const selectedTopics: string[] = topics;
+
+    this.filteredPosts = this.posts.filter((post) => {
+      const postRating = this.calculateRatingsAvg(post.ratings);
+
+      const withinRatingRange =
+        postRating >= this.ratingRange.lower &&
+        postRating <= this.ratingRange.upper;
+
+      const matchesReadStatus =
+        isRead === 'Read'
+          ? post.readBy && post.readBy.length > 0
+          : isRead === 'Unread'
+          ? !post.readBy || post.readBy.length === 0
+          : true;
+
+      const matchesTopic =
+        selectedTopics.length > 0
+          ? selectedTopics.some((topic) => post.topics.includes(topic))
+          : true;
+
+      return withinRatingRange && matchesTopic;
+    });
+
+    console.log('Applied Filters:', this.filterForm.value);
+  }
+
+  goToDetails(postId: string | undefined) {
+    this.router.navigate(['/post-details'], {
+      queryParams: { id: postId },
+    });
   }
 
   onRangeChange(event: any) {
     this.minRating = event.detail.value.lower;
     this.maxRating = event.detail.value.upper;
+  }
+
+  getUsernameById(userId: string): string {
+    return this.userService.getUsernameById(userId);
+  }
+
+  getAllTopics(): string[] {
+    const topics = new Set<string>();
+    this.posts.forEach((post) =>
+      post.topics.forEach((topic) => topics.add(topic))
+    );
+    return Array.from(topics);
   }
 }

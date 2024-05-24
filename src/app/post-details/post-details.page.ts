@@ -1,6 +1,3 @@
-// Make ui for more than one image for each summary
-// Make ui for (specific for books) when there is more than one summary for each book
-
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Post, User, Rating, Comment } from '../shared/interfaces';
@@ -20,13 +17,14 @@ import {
 } from '@angular/fire/auth';
 import { UserService } from '../services/user.service';
 import { PostService } from '../services/post.service';
+import { ViewWillEnter } from '@ionic/angular';
 
 @Component({
   selector: 'app-post',
   templateUrl: './post-details.page.html',
   styleUrls: ['./post-details.page.scss'],
 })
-export class PostDetailsPage implements OnInit {
+export class PostDetailsPage implements OnInit, ViewWillEnter {
   constructor(
     private route: ActivatedRoute,
     public auth: Auth,

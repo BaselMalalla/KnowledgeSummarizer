@@ -5,13 +5,14 @@ import { Observable } from 'rxjs';
 import { convertFirebaseDate, calculateRatingsAvg } from '../shared/utils';
 import { PostService } from '../services/post.service';
 import { UserService } from '../services/user.service';
+import { ViewWillEnter } from '@ionic/angular';
 
 @Component({
   selector: 'app-fav',
   templateUrl: './fav.page.html',
   styleUrls: ['./fav.page.scss'],
 })
-export class FavPage implements OnInit {
+export class FavPage implements OnInit, ViewWillEnter {
   convertFirebaseDate = convertFirebaseDate;
   calculateRatingsAvg = calculateRatingsAvg;
 
@@ -28,7 +29,7 @@ export class FavPage implements OnInit {
     this.likedPosts = this.getLikedPosts();
     console.log(this.likedPosts, 'likedPosts from ngOnInit');
   }
-  async onViewWillEnter() {
+  async ionViewWillEnter() {
     await this.postService.getPostsCopy();
     this.posts = this.postService.posts;
     this.likedPosts = this.getLikedPosts();
