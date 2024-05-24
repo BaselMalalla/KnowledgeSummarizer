@@ -9,7 +9,7 @@ export interface Post {
   likedBy: string[];
   comments: Comment[];
   ratings: Rating[];
-  readBy?: string[];
+  readBy: string[];
   isSelected?: boolean;
 }
 export interface Detail {
@@ -31,5 +31,4 @@ export interface User {
   username: string;
   userId: string;
   bio: string;
-  readPosts: string[];
 }

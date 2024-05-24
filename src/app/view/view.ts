@@ -14,7 +14,7 @@ import { ViewWillEnter } from '@ionic/angular';
   templateUrl: './view.page.html',
   styleUrls: ['./view.page.scss'],
 })
-export class ViewPage implements ViewWillEnter, OnInit {
+export class ViewPage implements ViewWillEnter {
   // imported functions
   convertFirebaseDate = convertFirebaseDate;
   calculateRatingsAvg = calculateRatingsAvg;
@@ -25,10 +25,7 @@ export class ViewPage implements ViewWillEnter, OnInit {
     private postService: PostService,
     private userService: UserService
   ) {}
-  async ngOnInit(): Promise<void> {
-    // await this.postService.getPostsCopy();
-    // this.posts = this.postService.posts;
-  }
+
   async ionViewWillEnter() {
     await this.postService.getPostsCopy();
     this.posts = this.postService.posts;

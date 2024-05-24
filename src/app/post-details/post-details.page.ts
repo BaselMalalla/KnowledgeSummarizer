@@ -45,6 +45,7 @@ export class PostDetailsPage implements OnInit, ViewWillEnter {
   newComment: string = '';
   usersArray: any[] = [];
   isPostLikedByUser: boolean = false;
+  isPostReadByUser: boolean = false;
 
   public post!: Post;
   postId!: string | null;
@@ -56,11 +57,6 @@ export class PostDetailsPage implements OnInit, ViewWillEnter {
   ionViewWillEnter() {
     this.userId = this.getCurrentUserId();
     this.loadPost();
-    this.isPostLikedByUser = this.postService.isPostLikedByUser(
-      this.post.likedBy,
-      this.userId
-    );
-    this.usersArray = this.userService.users;
     console.log(this.usersArray, 'from ionViewWillEnter');
   }
 
@@ -68,7 +64,15 @@ export class PostDetailsPage implements OnInit, ViewWillEnter {
     if (this.postId) {
       const doc = await this.postService.getPost(this.postId);
       this.post = this.accessPostParts(doc) as Post;
-      console.log(this.post, 'from loadPost');
+      this.isPostLikedByUser = this.postService.isPostLikedByUser(
+        this.post.likedBy,
+        this.userId
+      );
+      this.isPostReadByUser = this.postService.isPostReadByUser(
+        this.post.readBy,
+        this.userId
+      );
+      this.usersArray = this.userService.users;
     }
   }
 
@@ -98,18 +102,24 @@ export class PostDetailsPage implements OnInit, ViewWillEnter {
   }
 
   toggleRead() {
-    // if (this.userId) {
-    //   this.userLiked = !this.userLiked;
-    //   if (this.userLiked) {
-    //     this.post.likedBy.push(this.userId);
-    //   } else {
-    //     this.post.likedBy.pop();
-    //   }
-    //   console.log(this.post.likedBy);
-    // } else {
-    //   alert('You must be logged in to like a post');
-    // }
-    // this.updatePost();
+    if (this.userId) {
+      this.isPostReadByUser = !this.isPostReadByUser;
+      if (this.isPostReadByUser) {
+        if (!this.post.readBy) {
+          this.post.readBy = [];
+        }
+        this.post.readBy.push(this.userId);
+      } else {
+        const index = this.post.readBy.indexOf(this.userId);
+        if (index > -1) {
+          this.post.readBy.splice(index, 1);
+        }
+      }
+      console.log(this.post.readBy);
+      this.updatePost();
+    } else {
+      alert('You must be logged in to mark a post as read');
+    }
   }
 
   setPersonalRating(star: number) {
@@ -134,6 +144,7 @@ export class PostDetailsPage implements OnInit, ViewWillEnter {
       date,
       detailsArray,
       likedBy,
+      readBy,
       ratings,
       title,
       topics,
@@ -147,6 +158,7 @@ export class PostDetailsPage implements OnInit, ViewWillEnter {
       date,
       detailsArray,
       likedBy,
+      readBy,
       ratings,
       title,
       topics,

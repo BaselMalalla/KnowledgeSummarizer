@@ -7,7 +7,7 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">edit-profile</ion-title>
+      <ion-title size="large">Edit your profile</ion-title>
     </ion-toolbar>
   </ion-header>
 
@@ -17,18 +17,10 @@
   </ion-item>
 
   <ion-item>
-    <ion-label>Email:</ion-label>
-    <ion-input [(ngModel)]="email"></ion-input>
+    <ion-label>Bio:</ion-label>
+    <ion-input [(ngModel)]="bio"></ion-input>
   </ion-item>
 
-  <ion-item>
-    <ion-label>Password:</ion-label>
-    <ion-input [(ngModel)]="password" type="password"></ion-input>
-  </ion-item>
-  <ion-item>
-    <ion-label>Bio:</ion-label>
-    <ion-input [(ngModel)]="Bio"></ion-input>
-  </ion-item>
   <ion-footer
     style="
       position: fixed;

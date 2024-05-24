@@ -21,10 +21,10 @@ export class SearchPage {
   public filteredPosts: Post[] = [];
 
   ratingRange: any = {
-    lower: 1,
+    lower: 0,
     upper: 5,
   };
-  minRating: number = 1;
+  minRating: number = 0;
   maxRating: number = 5;
   filterForm: FormGroup;
   searchitem = '';
@@ -54,14 +54,20 @@ export class SearchPage {
 
   clearAll() {
     this.searchitem = '';
-    this.ratingRange = { lower: 1, upper: 5 };
-    this.filterForm.reset({ isRead: '', topic: [] });
+    this.ratingRange = { lower: 0, upper: 5 };
+    this.filterForm.reset();
     this.filteredPosts = this.posts; // Reset to original posts
   }
 
   applyFilter() {
     const { isRead, topics } = this.filterForm.value;
-    const selectedTopics: string[] = topics;
+    let selectedTopics: string[] = [];
+
+    if (topics) {
+      selectedTopics = topics;
+    }
+
+    console.log('selectedTopics', selectedTopics); // Check if selectedTopics has values
 
     this.filteredPosts = this.posts.filter((post) => {
       const postRating = this.calculateRatingsAvg(post.ratings);
@@ -81,6 +87,8 @@ export class SearchPage {
         selectedTopics.length > 0
           ? selectedTopics.some((topic) => post.topics.includes(topic))
           : true;
+
+      console.log(selectedTopics, matchesTopic, 'matchesTopic');
 
       return withinRatingRange && matchesTopic;
     });

@@ -23,7 +23,7 @@ import { Router } from '@angular/router';
 export class NewPostPage {
   postForm: FormGroup;
 
-  theCombSummary: string [0]= this.combService.combinedSummary[0];
+  theCombSummary: string[0] = this.combService.combinedSummary[0];
   constructor(
     private fb: FormBuilder,
     private firebaseService: FirebaseService,
@@ -71,6 +71,7 @@ export class NewPostPage {
       }
     }
     const likedBy: string[] = [];
+    const readBy: string[] = [];
     const ratings: Rating[] = [];
     const comments: Comment[] = [];
     const auth = getAuth();
@@ -83,6 +84,7 @@ export class NewPostPage {
       date: new Date(),
       detailsArray,
       likedBy,
+      readBy,
       comments,
       ratings,
     };
@@ -111,7 +113,8 @@ export class NewPostPage {
         await this.firebaseService.addPost(newPost);
         this.showAlert('Success', 'Post created successfully');
         this.clearForm();
-        () => {this.combService.combinedSummary[0] = "";
+        () => {
+          this.combService.combinedSummary[0] = '';
         };
       } catch (err) {
         this.showAlert('Error', 'Failed to create a new post');
@@ -163,7 +166,6 @@ export class NewPostPage {
     await alert.present();
   }
   onSelectCombSummary() {
-    
     this.router.navigate(['/view-comb']);
   }
 }

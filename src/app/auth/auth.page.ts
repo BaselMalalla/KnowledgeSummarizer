@@ -99,8 +99,7 @@ export class AuthPage implements OnInit {
         const { username } = this.signupForm.value;
         const userId = user.uid;
         const bio = '';
-        const readPosts: string[] = [];
-        const userObj: User = { username, userId, bio, readPosts };
+        const userObj: User = { username, userId, bio };
         this.firebaseService.addUser(userObj);
         this.router.navigate(['/view']);
         alert('signed up succesfully');

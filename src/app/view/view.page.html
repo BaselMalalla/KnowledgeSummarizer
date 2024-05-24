@@ -41,7 +41,7 @@
             <ion-col size="12">
               <p class="topics">
                 <ng-container *ngFor="let topic of post.topics; let i = index">
-                  {{ i !== 0 ? ', ' : '' }} #{{ topic }}
+                  {{ i !== 0 ? ' ' : '' }} #{{ topic }}
                 </ng-container>
               </p>
             </ion-col>

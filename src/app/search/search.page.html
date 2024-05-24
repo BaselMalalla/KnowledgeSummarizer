@@ -10,7 +10,7 @@
     <ion-label>Rating Range</ion-label>
     <ion-range
       dualKnobs="true"
-      min="1"
+      min="0"
       max="5"
       step="0.25"
       [(ngModel)]="ratingRange"
@@ -91,7 +91,7 @@
             <ion-col size="12">
               <p class="topics">
                 <ng-container *ngFor="let topic of post.topics; let i = index">
-                  {{ i !== 0 ? ', ' : '' }} #{{ topic }}
+                  {{ i !== 0 ? ' ' : '' }} #{{ topic }}
                 </ng-container>
               </p>
             </ion-col>

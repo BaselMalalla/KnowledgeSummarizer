@@ -27,6 +27,7 @@ import {
   doc,
   deleteDoc,
   updateDoc,
+  where,
   docData,
   setDoc,
   addDoc,
@@ -75,6 +76,27 @@ export class UserService {
       this.users.push(doc.data());
     });
   }
+
+  async updateUser(user: User): Promise<void> {
+    const usersCollection = collection(this.firestore, 'users');
+    const q = query(usersCollection, where('userId', '==', user.userId));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      const userDoc = querySnapshot.docs[0];
+      const userDocRef = doc(this.firestore, 'users', userDoc.id);
+
+      await updateDoc(userDocRef, {
+        username: user.username,
+        bio: user.bio,
+      });
+
+      console.log('User updated successfully');
+    } else {
+      console.error('User not found');
+    }
+  }
+
   getUsernameById(userId: string): string {
     let username = 'there is no such user';
     this.users.forEach((user) => {

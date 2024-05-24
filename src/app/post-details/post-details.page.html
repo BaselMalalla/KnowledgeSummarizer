@@ -27,7 +27,7 @@
 
     <p class="topics">
       <ng-container *ngFor="let topic of post.topics; let i = index">
-        {{ i !== 0 ? ', ' : '' }} #{{ topic }}
+        {{ i !== 0 ? ' ' : '' }} #{{ topic }}
       </ng-container>
     </p>
     <div class="post-meta">
@@ -37,6 +37,7 @@
         ></ion-icon>
         <span>{{post.likedBy.length }} Likes</span>
       </ion-item>
+
       <ion-item lines="none" class="rating-item">
         <ion-label
           >{{ calculateRatingsAvg(post.ratings).toFixed(1) }} / 5</ion-label
@@ -51,6 +52,22 @@
         </div>
       </ion-item>
     </div>
+    <ion-item>
+      <ion-button
+        fill="clear"
+        slot="end"
+        lines="none"
+        (click)="toggleRead()"
+        class="read-item"
+        [color]="isPostReadByUser ? 'primary' : 'medium'"
+      >
+        {{ isPostReadByUser ? 'Mark as unread' : 'Mark as read ' }}
+        <ion-icon
+          style="margin-left: 5px"
+          [name]="isPostReadByUser ? 'checkmark-done-sharp' : 'checkmark-done-outline'"
+        ></ion-icon>
+      </ion-button>
+    </ion-item>
 
     <div class="comments-section">
       <h2>Comments</h2>
