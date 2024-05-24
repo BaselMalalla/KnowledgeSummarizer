@@ -73,7 +73,7 @@
                 <ion-label position="floating">Summary {{ i + 1 }}</ion-label>
                 <ion-textarea
                   formControlName="summary"
-                  [(ngModel)]="this.combService.combinedSummary"
+                  [(ngModel)]="this.combService.combinedSummary[i]"
                 ></ion-textarea>
               </ion-item>
               <ion-note
