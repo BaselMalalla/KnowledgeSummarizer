@@ -42,6 +42,13 @@ export class DataQueryService {
     );
   }
 
+  getUsers(): Observable<User[]> {
+    const postsCollection = collection(this.firestore, 'users');
+    return collectionData(postsCollection, { idField: 'id' }).pipe(
+      map((users) => users as User[])
+    );
+  }
+
   async getPost(id) {
     const docRef = doc(this.firestore, 'posts', id);
     const docSnap = await getDoc(docRef);
@@ -63,34 +70,5 @@ export class DataQueryService {
     const docRef = doc(this.firestore, 'posts', id);
     await updateDoc(docRef, data);
     console.log('Document successfully updated!');
-  }
-
-  // async getUser(userId: string) {
-  //   q = query(
-  //     collection(this.firestore, 'users'),
-  //     where('userId', '==', userId)
-  //   );
-  //   const docSnap = await getDoc(q);
-  //   if (docSnap.exists()) {
-  //     console.log('Document data:', docSnap.data());
-  //     return docSnap.data();
-  //   } else {
-  //     console.log('No such document!');
-  //   }
-  // }
-
-  async getUser(userId: string) {
-    return new Promise(async (resolve, reject) => {
-      const q = query(
-        collection(this.firestore, 'Users'),
-        where('userId', '==', userId)
-      );
-
-      const querySnapshot = await getDocs(q);
-
-      querySnapshot.forEach((doc: any) => {
-        resolve(doc.data());
-      });
-    });
   }
 }

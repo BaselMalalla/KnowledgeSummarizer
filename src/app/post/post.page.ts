@@ -9,13 +9,17 @@ import { Observable } from 'rxjs';
 import { DocumentData } from 'firebase/firestore';
 import { convertFirebaseDate, calculateRatingsAvg } from '../shared/utils';
 import { ActivatedRoute } from '@angular/router';
+import { map } from 'rxjs';
 import {
   Auth,
   getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
+  user,
 } from '@angular/fire/auth';
+import { UserService } from '../user.service';
+import { PostService } from '../post.service';
 
 @Component({
   selector: 'app-post',
@@ -23,10 +27,13 @@ import {
   styleUrls: ['./post.page.scss'],
 })
 export class PostPage implements OnInit {
+  public users!: Observable<User[]>;
   constructor(
     private route: ActivatedRoute,
     private dataQueryService: DataQueryService,
-    public auth: Auth
+    public auth: Auth,
+    private userService: UserService,
+    private postService: PostService
   ) {
     this.route.queryParams.subscribe((params) => {
       this.postId = params['id'];
@@ -40,75 +47,30 @@ export class PostPage implements OnInit {
   personalRating: number = 0;
   userLiked: boolean = false;
   newComment: string = '';
+  usersArray: any[] = [];
 
   public post!: Post;
   postId!: string | null;
 
   ngOnInit() {
-    this.userId = this.getCurrentUserId();
+    console.log();
   }
 
   ionViewWillEnter() {
+    this.userId = this.getCurrentUserId();
     this.loadPost();
+    this.usersArray = this.userService.users;
+    console.log(this.usersArray, 'from ionViewWillEnter');
   }
 
   async loadPost() {
     if (this.postId) {
-      alert(this.postId + ' from ionViewWillEnter');
-      const doc = await this.dataQueryService.getPost(this.postId);
+      const doc = await this.postService.getPost(this.postId);
       this.post = this.accessPostParts(doc) as Post;
-      console.log(this.userId);
+      console.log(this.post, 'from loadPost');
     }
   }
 
-  accessPostParts(document: any): Post {
-    const {
-      authorId,
-      comments,
-      date,
-      detailsArray,
-      likedBy,
-      ratings,
-      title,
-      topics,
-      type,
-    } = document;
-
-    return {
-      authorId,
-      comments,
-      date,
-      detailsArray,
-      likedBy,
-      ratings,
-      title,
-      topics,
-      type,
-    };
-  }
-
-  async getUsernameById(userId: string) {
-    const user = await this.getUser(userId);
-    return user.username;
-  }
-
-  accessUserParts(document: any): User {
-    const { username, userId, bio, readPosts } = document;
-
-    return {
-      username,
-      userId,
-      bio,
-      readPosts,
-    };
-  }
-
-  async getUser(userId: string) {
-    const doc = await this.dataQueryService.getUser(userId);
-    const user = this.accessUserParts(doc) as User;
-    console.log(user);
-    return user;
-  }
   getCurrentUserId(): string {
     const auth = getAuth();
     const user = auth.currentUser;
@@ -118,6 +80,7 @@ export class PostPage implements OnInit {
       return '';
     }
   }
+
   toggleLike() {
     if (this.userId) {
       this.userLiked = !this.userLiked;
@@ -130,7 +93,7 @@ export class PostPage implements OnInit {
     } else {
       alert('You must be logged in to like a post');
     }
-    // Update db
+    this.updatePost();
   }
   setPersonalRating(star: number) {
     let rating = this.post.ratings.find((r) => r.userId === this.userId);
@@ -139,13 +102,40 @@ export class PostPage implements OnInit {
     } else {
       this.post.ratings.push({ userId: this.userId, value: star });
     }
-    // Update db
-    // this.postService.updatePost(this.post).subscribe(updatedPost => {
-    //   this.post = updatedPost;
-    //   this.personalRating = star;
-    // });
+    this.updatePost();
   }
 
+  getUsernameById(userId: string): string {
+    return this.userService.getUsernameById(userId);
+  }
+
+  accessPostParts(document: any): Post {
+    const {
+      id,
+      authorId,
+      comments,
+      date,
+      detailsArray,
+      likedBy,
+      ratings,
+      title,
+      topics,
+      type,
+    } = document;
+
+    return {
+      id,
+      authorId,
+      comments,
+      date,
+      detailsArray,
+      likedBy,
+      ratings,
+      title,
+      topics,
+      type,
+    };
+  }
   getPersonalRating(): number {
     const rating = this.post.ratings.find((r) => r.userId === this.userId);
     return rating ? rating.value : 0;
@@ -160,5 +150,18 @@ export class PostPage implements OnInit {
       this.post.comments.push(newCommentObject);
       this.newComment = '';
     }
+    console.log(this.post.id);
+    this.updatePost();
+  }
+
+  updatePost() {
+    this.postService
+      .updatePost(this.post)
+      .then((res) => {
+        console.log('Member record has been updated successfully', res);
+      })
+      .catch((err) => {
+        console.log('Failed to update member record', err);
+      });
   }
 }
