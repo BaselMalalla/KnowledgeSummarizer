@@ -84,6 +84,7 @@ export class PostService {
     this.posts$ = collectionData(q, { idField: 'id' }) as Observable<Post[]>;
   }
   async getPostsCopy() {
+    this.posts = [];
     const querySnapshot = await getDocs(collection(this.firestore, 'posts'));
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
@@ -117,5 +118,13 @@ export class PostService {
       topics: post.topics,
       type: post.type,
     });
+  }
+
+  isPostLikedByUser(likedBy: string[], userId: string): boolean {
+    return likedBy.includes(userId);
+  }
+
+  getTotalLikes(posts: Post[]): number {
+    return posts.reduce((acc, post) => acc + post.likedBy.length, 0);
   }
 }

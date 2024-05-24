@@ -32,7 +32,9 @@
     </p>
     <div class="post-meta">
       <ion-item lines="none" (click)="toggleLike()" class="like-item">
-        <ion-icon [name]="userLiked ? 'heart' : 'heart-outline'"></ion-icon>
+        <ion-icon
+          [name]="isPostLikedByUser ? 'heart' : 'heart-outline'"
+        ></ion-icon>
         <span>{{post.likedBy.length }} Likes</span>
       </ion-item>
       <ion-item lines="none" class="rating-item">
@@ -64,7 +66,7 @@
           <ion-list>
             <ion-item *ngFor="let comment of post.comments">
               <ion-label>
-                <h3>func comment.userId</h3>
+                <h3>{{getUsernameById(comment.userId)}}</h3>
                 <p>{{ comment.content }}</p>
               </ion-label>
             </ion-item>

@@ -8,66 +8,83 @@ import {
   AfterViewInit,
   ViewChild,
 } from '@angular/core';
+import {
+  ViewWillLeave,
+  ViewDidLeave,
+  ViewWillEnter,
+  ViewDidEnter,
+} from '@ionic/angular';
 import { GestureController, IonCard, Platform } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { Post, Rating } from '../shared/interfaces';
+import { Observable } from 'rxjs';
+import { convertFirebaseDate, calculateRatingsAvg } from '../shared/utils';
+import { PostService } from '../services/post.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
 })
-export class ProfilePage implements AfterViewInit {
+export class ProfilePage implements ViewWillEnter, AfterViewInit, ViewDidLeave {
   @ViewChildren(IonCard, { read: ElementRef }) cards!: QueryList<ElementRef>;
   @ViewChild('trashCan', { read: ElementRef }) trashCan!: ElementRef;
 
-  username: string = 'mrmaradi';
-  bio: string = 'I am a software developer and a tech blogger';
-  postCount: number = 100; // Renamed this property to avoid conflict
-  likes: number = 1000;
-  posts: {
-    id: number;
-    title: string;
-    type: string;
-    username: string;
-    content: string;
-    likeCount: number;
-    rating: number;
-    topics: string[];
-    date: string;
-    image: string;
-  }[] = [
-    {
-      id: 1,
-      title: 'Ionic 4 Tutorial',
-      type: 'article',
-      username: 'mrmaradi',
-      content: 'This is a tutorial on Ionic 4...',
-      likeCount: 50,
-      rating: 4,
-      topics: ['Angular', 'Ionic', 'Web Development'],
-      date: new Date().toLocaleDateString(),
-      image: 'https://www.techiediaries.com/modern-angular.webp',
-    },
-    {
-      id: 2,
-      title: 'Another Post',
-      type: 'blog',
-      username: 'johndoe',
-      content: 'Content of another post...',
-      likeCount: 30,
-      rating: 3,
-      topics: ['React', 'JavaScript'],
-      date: new Date().toLocaleDateString(),
-      image: 'https://www.techiediaries.com/modern-angular.webp',
-    },
-  ];
+  convertFirebaseDate = convertFirebaseDate;
+  calculateRatingsAvg = calculateRatingsAvg;
+  public posts: any[] = [];
+  public userPosts: any[] = [];
+  username: string = '';
+  bio: string = '';
+  postsCount: number = 0;
+  likesCount: number = 0;
 
   constructor(
     private gestureCtrl: GestureController,
     private renderer: Renderer2,
     private router: Router,
-    private platform: Platform
+    private platform: Platform,
+    private postService: PostService,
+    private userService: UserService
   ) {}
+
+  // async ngOnInit(): Promise<void> {
+  //   // await this.postService.getPostsCopy();
+  //   // this.posts = this.postService.posts;
+  //   // this.userPosts = this.getUserPosts();
+  //   // this.username = this.userService.getUsernameById(
+  //   //   this.userService.getCurrentUserId()
+  //   // );
+  //   // this.bio = this.userService.getBioById(this.userService.getCurrentUserId());
+  //   // this.postsCount = this.userPosts.length;
+  //   // this.likesCount = this.postService.getTotalLikes(this.userPosts);
+  // }
+
+  async ionViewWillEnter() {
+    await this.postService.getPostsCopy();
+    this.posts = this.postService.posts;
+    this.userPosts = this.getUserPosts();
+    console.log(this.userPosts, 'userPosts from ionViewWillEnter');
+    this.username = this.userService.getUsernameById(
+      this.userService.getCurrentUserId()
+    );
+    this.bio = this.userService.getBioById(this.userService.getCurrentUserId());
+    this.postsCount = this.userPosts.length;
+    this.likesCount = this.postService.getTotalLikes(this.userPosts);
+  }
+  ionViewDidLeave(): void {
+    this.cleanupTask();
+  }
+  getUserPosts(): Post[] {
+    console.log(this.posts, 'posts from getUserPosts');
+    return this.posts.filter(
+      (post) => post.authorId === this.userService.getCurrentUserId()
+    );
+  }
+  getUsernameById(userId: string): string {
+    return this.userService.getUsernameById(userId);
+  }
 
   ngAfterViewInit() {
     this.cards.forEach((card, index) => {
@@ -124,5 +141,15 @@ export class ProfilePage implements AfterViewInit {
         id: postId,
       },
     });
+  }
+
+  cleanupTask() {
+    this.posts = [];
+    this.userPosts = [];
+    this.username = '';
+    this.bio = '';
+    this.postsCount = 0;
+    this.likesCount = 0;
+    console.log('cleanupTask');
   }
 }

@@ -1,45 +1,49 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Post, Rating } from '../shared/interfaces';
+import { Observable } from 'rxjs';
+import { convertFirebaseDate, calculateRatingsAvg } from '../shared/utils';
+import { PostService } from '../services/post.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-fav',
   templateUrl: './fav.page.html',
   styleUrls: ['./fav.page.scss'],
 })
-export class FavPage {
-  constructor(private router: Router) {}
+export class FavPage implements OnInit {
+  convertFirebaseDate = convertFirebaseDate;
+  calculateRatingsAvg = calculateRatingsAvg;
 
-  posts = [
-    {
-      id: 1,
-      title: 'Ionic 4 Tutorial',
-      type: 'article',
-      username: 'mrmaradi',
-      content:
-        'This is a tutorial on Ionic 4. Ionic 4 is a powerful framework for building cross-platform mobile applications using web technologies such as HTML, CSS, and JavaScript. It provides a wide range of UI components, native device features integration, and seamless performance. With Ionic 4, developers can create beautiful and highly functional mobile apps that run on iOS, Android, and the web. This tutorial will guide you through the process of getting started with Ionic 4, exploring its key features, and building your first mobile app.',
-      likeCount: 50,
-      rating: 4.2,
-      topics: ['Angular', 'Ionic', 'Web Development'],
-      date: new Date().toLocaleDateString(),
-      image: 'https://www.techiediaries.com/modern-angular.webp',
-    },
-    {
-      id: 2,
-      title: 'Another Post',
-      type: 'blog',
-      username: 'johndoe',
-      content: 'Content of another post...',
-      likeCount: 30,
-      rating: 3.7,
-      topics: ['React', 'JavaScript'],
-      date: new Date().toLocaleDateString(),
-      image: 'https://www.techiediaries.com/modern-angular.webp',
-    },
-  ];
-
-  goToDetails(postId: number) {
+  public posts: any[] = [];
+  public likedPosts: any[] = [];
+  constructor(
+    private router: Router,
+    private postService: PostService,
+    private userService: UserService
+  ) {}
+  async ngOnInit(): Promise<void> {
+    await this.postService.getPostsCopy();
+    this.posts = this.postService.posts;
+    this.likedPosts = this.getLikedPosts();
+    console.log(this.likedPosts, 'likedPosts from ngOnInit');
+  }
+  async onViewWillEnter() {
+    await this.postService.getPostsCopy();
+    this.posts = this.postService.posts;
+    this.likedPosts = this.getLikedPosts();
+  }
+  goToDetails(postId: string | undefined) {
     this.router.navigate(['/post-details'], {
       queryParams: { id: postId },
     });
+  }
+  getUsernameById(userId: string): string {
+    return this.userService.getUsernameById(userId);
+  }
+  getLikedPosts(): any[] {
+    return this.posts.filter((post) =>
+      post.likedBy.includes(this.userService.getCurrentUserId())
+    );
   }
 }

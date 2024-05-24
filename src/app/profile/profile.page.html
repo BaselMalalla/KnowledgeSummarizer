@@ -16,18 +16,21 @@
     <ion-row>
       <ion-col size="6">
         <ion-avatar class="custom-avatar">
-          <img src="https://www.techiediaries.com/modern-angular.webp" alt="Profile Image" />
+          <img
+            src="https://www.techiediaries.com/modern-angular.webp"
+            alt="Profile Image"
+          />
         </ion-avatar>
       </ion-col>
       <ion-col size="3" class="stat-col">
         <div class="stat">
-          <h3>{{ postCount }}</h3> <!-- Updated to postCount -->
+          <h3>{{ postsCount }}</h3>
           <p>Posts</p>
         </div>
       </ion-col>
       <ion-col size="3" class="stat-col">
         <div class="stat">
-          <h3>{{ likes }}</h3>
+          <h3>{{ likesCount }}</h3>
           <p>Likes</p>
         </div>
       </ion-col>
@@ -43,20 +46,23 @@
   </div>
 
   <ion-list>
-    <ion-card *ngFor="let post of posts; let i = index" #card>
+    <ion-card *ngFor="let post of userPosts; let i = index" #card>
       <ion-card-header (click)="goToDetails(post.id)">
         <ion-card-title>{{ post.title }}</ion-card-title>
         <ion-row>
           <ion-col>
-            <ion-card-subtitle>{{ post.type }} by {{ post.username }}</ion-card-subtitle>
+            <ion-card-subtitle
+              >{{ post.type }} by
+              {{getUsernameById(post.authorId)}}</ion-card-subtitle
+            >
           </ion-col>
-          <ion-item>
+          <ion-item lines="none">
             <ion-icon name="heart"></ion-icon>
-            <span>{{ post.likeCount }} Likes</span>
+            <span>{{ post.likedBy.length }} Likes</span>
             <ion-icon
               name="star"
               *ngFor="let star of [1, 2, 3, 4, 5]"
-              [color]="star <= post.rating ? 'primary' : 'medium'"
+              [color]="star <= calculateRatingsAvg(post.ratings) ? 'primary' : 'medium'"
             ></ion-icon>
           </ion-item>
         </ion-row>
@@ -65,10 +71,10 @@
         <ion-grid>
           <ion-row>
             <ion-col size="12">
-              <img [src]="post.image" alt="Post Image" />
+              <img [src]="post.detailsArray[0].images[0]" alt="Post Image" />
             </ion-col>
             <ion-col size="12">
-              <ion-text>{{ post.content }}</ion-text>
+              <ion-text>{{ post.detailsArray[0].summary }}</ion-text>
             </ion-col>
           </ion-row>
           <ion-row>
@@ -79,7 +85,7 @@
                 </ng-container>
               </p>
             </ion-col>
-            <ion-col>{{ post.date }}</ion-col>
+            <ion-col> {{convertFirebaseDate(post.date) }}</ion-col>
           </ion-row>
         </ion-grid>
       </ion-card-content>

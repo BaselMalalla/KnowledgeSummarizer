@@ -7,7 +7,14 @@ import {
   uploadBytes,
   getDownloadURL,
 } from '@angular/fire/storage';
-
+import {
+  Auth,
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  user,
+} from '@angular/fire/auth';
 // AngularFire
 import {
   collection,
@@ -45,7 +52,11 @@ export class UserService {
   // 4. Collection reference
   userCollection: CollectionReference<DocumentData>;
 
-  constructor(public firestore: Firestore, public fbStorage: Storage) {
+  constructor(
+    public firestore: Firestore,
+    public fbStorage: Storage,
+    public auth: Auth
+  ) {
     // get a reference to the users collection
     this.userCollection = collection(this.firestore, 'users');
 
@@ -72,5 +83,23 @@ export class UserService {
       }
     });
     return username;
+  }
+  getBioById(userId: string): string {
+    let bio = '';
+    this.users.forEach((user) => {
+      if (user.userId === userId) {
+        bio = user.bio;
+      }
+    });
+    return bio;
+  }
+  getCurrentUserId(): string {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+      return user.uid;
+    } else {
+      return '';
+    }
   }
 }

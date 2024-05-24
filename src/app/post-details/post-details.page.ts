@@ -12,6 +12,7 @@ import { map } from 'rxjs';
 import {
   Auth,
   getAuth,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
@@ -26,7 +27,6 @@ import { PostService } from '../services/post.service';
   styleUrls: ['./post-details.page.scss'],
 })
 export class PostDetailsPage implements OnInit {
-  public users!: Observable<User[]>;
   constructor(
     private route: ActivatedRoute,
     public auth: Auth,
@@ -37,15 +37,16 @@ export class PostDetailsPage implements OnInit {
       this.postId = params['id'];
     });
     this.userId = this.getCurrentUserId();
+    console.log(this.userId, 'auth user id from constructor');
   }
   convertFirebaseDate = convertFirebaseDate;
   calculateRatingsAvg = calculateRatingsAvg;
 
   userId: string;
   personalRating: number = 0;
-  userLiked: boolean = false;
   newComment: string = '';
   usersArray: any[] = [];
+  isPostLikedByUser: boolean = false;
 
   public post!: Post;
   postId!: string | null;
@@ -57,6 +58,10 @@ export class PostDetailsPage implements OnInit {
   ionViewWillEnter() {
     this.userId = this.getCurrentUserId();
     this.loadPost();
+    this.isPostLikedByUser = this.postService.isPostLikedByUser(
+      this.post.likedBy,
+      this.userId
+    );
     this.usersArray = this.userService.users;
     console.log(this.usersArray, 'from ionViewWillEnter');
   }
@@ -81,8 +86,8 @@ export class PostDetailsPage implements OnInit {
 
   toggleLike() {
     if (this.userId) {
-      this.userLiked = !this.userLiked;
-      if (this.userLiked) {
+      this.isPostLikedByUser = !this.isPostLikedByUser;
+      if (this.isPostLikedByUser) {
         this.post.likedBy.push(this.userId);
       } else {
         this.post.likedBy.pop();
@@ -142,7 +147,7 @@ export class PostDetailsPage implements OnInit {
   addComment() {
     if (this.newComment.trim()) {
       const newCommentObject: Comment = {
-        userId: this.getCurrentUserId(),
+        userId: this.userId,
         content: this.newComment,
       };
       this.post.comments.push(newCommentObject);
