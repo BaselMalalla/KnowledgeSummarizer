@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Post, Rating } from '../shared/interfaces';
-import { Observable } from 'rxjs';
+import { Post } from '../shared/interfaces';
 import { convertFirebaseDate, calculateRatingsAvg } from '../shared/utils';
 import { CombService } from '../services/comb.service';
 import { PostService } from '../services/post.service';
+import { isEmpty } from 'rxjs';
 
 @Component({
   selector: 'app-view-comb',
@@ -18,7 +18,7 @@ export class ViewCombPage implements OnInit {
   extractedSummaries: string[] = [];
   combinedSummary: string = '';
   public posts: any[] = [];
-
+  selectedIcon="close-circle-outline";
   constructor(
     private router: Router,
     private postService: PostService,
@@ -33,6 +33,7 @@ export class ViewCombPage implements OnInit {
   async ionViewWillEnter() {
     await this.postService.getPostsCopy();
     this.posts = this.postService.posts;
+    if(!this.extractedSummaries)
     this.posts.forEach((post) => {
       post.isSelected = false; // Initialize disabled property
     });
@@ -44,9 +45,17 @@ export class ViewCombPage implements OnInit {
     });
   }
 
-  selectsummaries(selectedSummary: string, post: Post) {
-    this.extractedSummaries.push(selectedSummary);
-    console.log(this.extractedSummaries, 'select', post.isSelected);
+  selectUnselectSummary(selectedSummary: string, post: Post) {
+    post.isSelected = !post.isSelected;
+    if (post.isSelected) {
+      this.extractedSummaries.push(selectedSummary);
+      this.selectedIcon="close-circle-outline";
+    } else {
+      this.extractedSummaries = this.extractedSummaries.filter(
+        (summary) => summary !== selectedSummary
+      );
+    }
+    console.log(this.extractedSummaries, 'select/unselect', post.isSelected);
   }
 
   compineSummary() {
@@ -54,24 +63,15 @@ export class ViewCombPage implements OnInit {
     this.extractedSummaries = [];
     this.router.navigate(['/new-post']);
   }
-
-  toggleCard(post: Post) {
-    post.isSelected = !post.isSelected;
-  }
-
-  SelectUnSelectSummary(selectedSummary: string, post: Post) {
-    console.log(post.isSelected);
-    if (post.isSelected == true) {
-      this.selectsummaries(selectedSummary, post);
-      this.toggleCard(post);
-    }
-    if (post.isSelected == false) {
-      this.extractedSummaries = this.extractedSummaries.filter(
-        (summary) => summary !== selectedSummary
-      );
-      this.toggleCard(post);
-    }
-
-    console.log(this.extractedSummaries, 'select/unselect', post.isSelected);
+  
+  deSelectAll(){
+    this.extractedSummaries = [];
+    this.posts.forEach((post) => {
+      post.isSelected = false})
+      if(!this.extractedSummaries){
+        this.selectedIcon="checkmark-circle";
+      }
+      
+      
   }
 }

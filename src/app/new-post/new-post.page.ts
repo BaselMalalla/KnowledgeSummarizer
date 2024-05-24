@@ -111,6 +111,8 @@ export class NewPostPage {
         await this.firebaseService.addPost(newPost);
         this.showAlert('Success', 'Post created successfully');
         this.clearForm();
+        () => {this.combService.combinedSummary = '';
+        };
       } catch (err) {
         this.showAlert('Error', 'Failed to create a new post');
         console.error('Failed to create a new post', err);
@@ -161,9 +163,7 @@ export class NewPostPage {
     await alert.present();
   }
   onSelectCombSummary() {
-    () => {
-      this.combService.combinedSummary = '';
-    };
+    
     this.router.navigate(['/view-comb']);
   }
 }
