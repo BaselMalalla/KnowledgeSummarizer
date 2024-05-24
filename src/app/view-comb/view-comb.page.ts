@@ -59,7 +59,7 @@ export class ViewCombPage implements OnInit {
   }
 
   compineSummary() {
-    this.combService.combinedSummary = this.extractedSummaries.join('\n');
+    this.combService.combinedSummary[0] = this.extractedSummaries.join('\n');
     this.extractedSummaries = [];
     this.router.navigate(['/new-post']);
   }

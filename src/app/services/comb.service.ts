@@ -6,5 +6,5 @@ import { Injectable } from '@angular/core';
 export class CombService {
 
   constructor() { }
-  public combinedSummary:string="";
+  public combinedSummary:string[]=[];
 }

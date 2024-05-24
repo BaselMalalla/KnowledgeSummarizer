@@ -93,6 +93,22 @@ export class PostDetailsPage implements OnInit {
     }
     this.updatePost();
   }
+
+  toggleRead() {
+    if (this.userId) {
+      this.userLiked = !this.userLiked;
+      if (this.userLiked) {
+        this.post.likedBy.push(this.userId);
+      } else {
+        this.post.likedBy.pop();
+      }
+      console.log(this.post.likedBy);
+    } else {
+      alert('You must be logged in to like a post');
+    }
+    this.updatePost();
+  }
+
   setPersonalRating(star: number) {
     let rating = this.post.ratings.find((r) => r.userId === this.userId);
     if (rating) {

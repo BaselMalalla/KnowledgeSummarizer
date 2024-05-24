@@ -23,7 +23,7 @@ import { Router } from '@angular/router';
 export class NewPostPage {
   postForm: FormGroup;
 
-  theCombSummary: string = this.combService.combinedSummary;
+  theCombSummary: string [0]= this.combService.combinedSummary[0];
   constructor(
     private fb: FormBuilder,
     private firebaseService: FirebaseService,
@@ -111,7 +111,7 @@ export class NewPostPage {
         await this.firebaseService.addPost(newPost);
         this.showAlert('Success', 'Post created successfully');
         this.clearForm();
-        () => {this.combService.combinedSummary = '';
+        () => {this.combService.combinedSummary[0] = "";
         };
       } catch (err) {
         this.showAlert('Error', 'Failed to create a new post');
