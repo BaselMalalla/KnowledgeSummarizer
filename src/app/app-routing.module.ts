@@ -53,6 +53,11 @@ const routes: Routes = [
     loadChildren: () =>
       import('./view/view.module').then((m) => m.VeiwPageModule),
   },
+  {
+    path: 'view-comb',
+    loadChildren: () => import('./view-comb/view-comb.module').then( m => m.ViewCombPageModule)
+  },
+  
 ];
 
 @NgModule({

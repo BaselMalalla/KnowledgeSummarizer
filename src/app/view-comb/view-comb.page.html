@@ -1,0 +1,65 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>viewComb</ion-title>
+    <ion-buttons slot="end" fill="solid">
+      <ion-button (click)="compineSummary()">
+        combine now 
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-list *ngFor="let post of posts | async; let i = index" >
+    <ion-card [disabled]="post.isSelected"(click)="selectsummaries(post.detailsArray[0].summary,post)">
+      <ion-card-header>
+        <ion-card-title>{{ post.title }}</ion-card-title>
+        <ion-row>
+          <ion-col>
+            <ion-card-subtitle>{{ post.type }}</ion-card-subtitle>
+          </ion-col>
+          <ion-item lines="none">
+            <ion-icon name="heart"></ion-icon>
+            <span>{{ post.likedBy.length }} Likes</span>
+            <ion-icon
+              name="star"
+              *ngFor="let star of [1, 2, 3, 4, 5]"
+              [color]="star <= calculateRatingsAvg(post.ratings) ? 'primary' : 'medium'"
+            ></ion-icon>
+          </ion-item>
+        </ion-row>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="12">
+              <img [src]="post.detailsArray[0].images[0]" alt="Post Image" />
+            </ion-col>
+            <ion-col size="12">
+              <ion-text>{{ post.detailsArray[0].summary }}</ion-text>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12">
+              <p class="topics">
+                <ng-container *ngFor="let topic of post.topics; let i = index">
+                  {{ i !== 0 ? ', ' : '' }} #{{ topic }}
+                </ng-container>
+              </p>
+            </ion-col>
+            <ion-col>{{ convertFirebaseDate(post.date) }}</ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12">
+             
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+    
+    <ion-button  color="light" expand="block" (click)="  SelectUnSelectSummary(post.detailsArray[0].summary,post)">
+      unSelect
+    </ion-button>
+  </ion-list>
+</ion-content>

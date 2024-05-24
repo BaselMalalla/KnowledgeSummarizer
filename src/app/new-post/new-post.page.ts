@@ -12,6 +12,8 @@ import {
 } from '@angular/fire/auth';
 import { Firestore } from '@angular/fire/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
+import { CombService } from '../comb.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-new-post',
@@ -20,13 +22,17 @@ import { onAuthStateChanged } from 'firebase/auth';
 })
 export class NewPostPage {
   postForm: FormGroup;
-
+   
+  theCombSummary:string=this.combService.combinedSummary;
   constructor(
     private fb: FormBuilder,
     private firebaseService: FirebaseService,
     private alertController: AlertController,
     private loadingController: LoadingController,
-    public auth: Auth
+    public auth: Auth, 
+    public combService:CombService,
+    public router:Router
+
   ) {
     this.postForm = this.fb.group({
       type: ['', Validators.required],
@@ -154,5 +160,9 @@ export class NewPostPage {
       buttons: ['OK'],
     });
     await alert.present();
+  }
+  onSelectCombSummary(){
+    () => {this.combService.combinedSummary = ""}
+    this.router.navigate(['/view-comb']);
   }
 }

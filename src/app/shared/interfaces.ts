@@ -9,6 +9,7 @@ export interface Post {
   likedBy: string[];
   comments: Comment[];
   ratings: Rating[];
+  isSelected?:boolean;
 }
 export interface Detail {
   summary: string;
