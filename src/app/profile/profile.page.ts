@@ -7,6 +7,7 @@ import {
   QueryList,
   AfterViewInit,
   ViewChild,
+  ChangeDetectorRef,
 } from '@angular/core';
 import {
   ViewWillLeave,
@@ -27,7 +28,7 @@ import { UserService } from '../services/user.service';
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
 })
-export class ProfilePage implements ViewWillEnter, AfterViewInit, ViewDidLeave {
+export class ProfilePage implements ViewWillEnter, ViewDidLeave {
   @ViewChildren(IonCard, { read: ElementRef }) cards!: QueryList<ElementRef>;
   @ViewChild('trashCan', { read: ElementRef }) trashCan!: ElementRef;
 
@@ -46,20 +47,9 @@ export class ProfilePage implements ViewWillEnter, AfterViewInit, ViewDidLeave {
     private router: Router,
     private platform: Platform,
     private postService: PostService,
-    private userService: UserService
+    private userService: UserService,
+    private cdr: ChangeDetectorRef
   ) {}
-
-  // async ngOnInit(): Promise<void> {
-  //   // await this.postService.getPostsCopy();
-  //   // this.posts = this.postService.posts;
-  //   // this.userPosts = this.getUserPosts();
-  //   // this.username = this.userService.getUsernameById(
-  //   //   this.userService.getCurrentUserId()
-  //   // );
-  //   // this.bio = this.userService.getBioById(this.userService.getCurrentUserId());
-  //   // this.postsCount = this.userPosts.length;
-  //   // this.likesCount = this.postService.getTotalLikes(this.userPosts);
-  // }
 
   async ionViewWillEnter() {
     await this.postService.getPostsCopy();
@@ -72,21 +62,30 @@ export class ProfilePage implements ViewWillEnter, AfterViewInit, ViewDidLeave {
     this.bio = this.userService.getBioById(this.userService.getCurrentUserId());
     this.postsCount = this.userPosts.length;
     this.likesCount = this.postService.getTotalLikes(this.userPosts);
+
+    // Trigger change detection to update the view
+    this.cdr.detectChanges();
+
+    // Initialize gestures after the view has been updated
+    this.initGestures();
   }
+
   ionViewDidLeave(): void {
     this.cleanupTask();
   }
+
   getUserPosts(): Post[] {
     console.log(this.posts, 'posts from getUserPosts');
     return this.posts.filter(
       (post) => post.authorId === this.userService.getCurrentUserId()
     );
   }
+
   getUsernameById(userId: string): string {
     return this.userService.getUsernameById(userId);
   }
 
-  ngAfterViewInit() {
+  initGestures() {
     this.cards.forEach((card, index) => {
       const gesture = this.gestureCtrl.create({
         el: card.nativeElement,
@@ -132,7 +131,10 @@ export class ProfilePage implements ViewWillEnter, AfterViewInit, ViewDidLeave {
   }
 
   deleteCard(index: number) {
-    this.posts.splice(index, 1);
+    this.userPosts.splice(index, 1);
+    this.postService.deletePost(this.userPosts[index].id);
+    console.log('deleteCard from dd');
+    console.log(this.userPosts);
   }
 
   goToDetails(postId: number) {

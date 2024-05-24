@@ -100,18 +100,18 @@ export class PostDetailsPage implements OnInit {
   }
 
   toggleRead() {
-    if (this.userId) {
-      this.userLiked = !this.userLiked;
-      if (this.userLiked) {
-        this.post.likedBy.push(this.userId);
-      } else {
-        this.post.likedBy.pop();
-      }
-      console.log(this.post.likedBy);
-    } else {
-      alert('You must be logged in to like a post');
-    }
-    this.updatePost();
+    // if (this.userId) {
+    //   this.userLiked = !this.userLiked;
+    //   if (this.userLiked) {
+    //     this.post.likedBy.push(this.userId);
+    //   } else {
+    //     this.post.likedBy.pop();
+    //   }
+    //   console.log(this.post.likedBy);
+    // } else {
+    //   alert('You must be logged in to like a post');
+    // }
+    // this.updatePost();
   }
 
   setPersonalRating(star: number) {

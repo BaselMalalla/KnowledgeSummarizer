@@ -120,6 +120,10 @@ export class PostService {
     });
   }
 
+  deletePost(id: string): Promise<void> {
+    return deleteDoc(doc(this.firestore, 'posts', id));
+  }
+
   isPostLikedByUser(likedBy: string[], userId: string): boolean {
     return likedBy.includes(userId);
   }
