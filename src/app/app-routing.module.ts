@@ -3,11 +3,6 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'home',
-    loadChildren: () =>
-      import('./home/home.module').then((m) => m.HomePageModule),
-  },
-  {
     path: '',
     redirectTo: 'auth',
     pathMatch: 'full',
@@ -40,9 +35,11 @@ const routes: Routes = [
       import('./search/search.module').then((m) => m.SearchPageModule),
   },
   {
-    path: 'post',
+    path: 'post-details',
     loadChildren: () =>
-      import('./post/post.module').then((m) => m.PostPageModule),
+      import('./post-details/post-details.module').then(
+        (m) => m.PostDetailsPageModule
+      ),
   },
   {
     path: 'fav',
@@ -55,9 +52,9 @@ const routes: Routes = [
   },
   {
     path: 'view-comb',
-    loadChildren: () => import('./view-comb/view-comb.module').then( m => m.ViewCombPageModule)
+    loadChildren: () =>
+      import('./view-comb/view-comb.module').then((m) => m.ViewCombPageModule),
   },
-  
 ];
 
 @NgModule({

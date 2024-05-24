@@ -4,7 +4,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Post, User, Rating, Comment } from '../shared/interfaces';
-import { DataQueryService } from '../data-query.service';
 import { Observable } from 'rxjs';
 import { DocumentData } from 'firebase/firestore';
 import { convertFirebaseDate, calculateRatingsAvg } from '../shared/utils';
@@ -18,19 +17,18 @@ import {
   signOut,
   user,
 } from '@angular/fire/auth';
-import { UserService } from '../user.service';
-import { PostService } from '../post.service';
+import { UserService } from '../services/user.service';
+import { PostService } from '../services/post.service';
 
 @Component({
   selector: 'app-post',
-  templateUrl: './post.page.html',
-  styleUrls: ['./post.page.scss'],
+  templateUrl: './post-details.page.html',
+  styleUrls: ['./post-details.page.scss'],
 })
-export class PostPage implements OnInit {
+export class PostDetailsPage implements OnInit {
   public users!: Observable<User[]>;
   constructor(
     private route: ActivatedRoute,
-    private dataQueryService: DataQueryService,
     public auth: Auth,
     private userService: UserService,
     private postService: PostService

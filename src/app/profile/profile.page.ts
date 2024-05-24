@@ -1,4 +1,13 @@
-import { Component, ElementRef, OnInit, Renderer2, ViewChildren, QueryList, AfterViewInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  Renderer2,
+  ViewChildren,
+  QueryList,
+  AfterViewInit,
+  ViewChild,
+} from '@angular/core';
 import { GestureController, IonCard, Platform } from '@ionic/angular';
 import { Router } from '@angular/router';
 
@@ -7,25 +16,25 @@ import { Router } from '@angular/router';
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
 })
-export class ProfilePage implements OnInit, AfterViewInit {
+export class ProfilePage implements AfterViewInit {
   @ViewChildren(IonCard, { read: ElementRef }) cards!: QueryList<ElementRef>;
   @ViewChild('trashCan', { read: ElementRef }) trashCan!: ElementRef;
 
   username: string = 'mrmaradi';
   bio: string = 'I am a software developer and a tech blogger';
-  postCount: number = 100;  // Renamed this property to avoid conflict
+  postCount: number = 100; // Renamed this property to avoid conflict
   likes: number = 1000;
-  posts: { 
-    id: number; 
-    title: string; 
-    type: string; 
-    username: string; 
-    content: string; 
-    likeCount: number; 
-    rating: number; 
-    topics: string[]; 
-    date: string; 
-    image: string; 
+  posts: {
+    id: number;
+    title: string;
+    type: string;
+    username: string;
+    content: string;
+    likeCount: number;
+    rating: number;
+    topics: string[];
+    date: string;
+    image: string;
   }[] = [
     {
       id: 1,
@@ -37,7 +46,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
       rating: 4,
       topics: ['Angular', 'Ionic', 'Web Development'],
       date: new Date().toLocaleDateString(),
-      image: 'https://www.techiediaries.com/modern-angular.webp'
+      image: 'https://www.techiediaries.com/modern-angular.webp',
     },
     {
       id: 2,
@@ -49,13 +58,16 @@ export class ProfilePage implements OnInit, AfterViewInit {
       rating: 3,
       topics: ['React', 'JavaScript'],
       date: new Date().toLocaleDateString(),
-      image: 'https://www.techiediaries.com/modern-angular.webp'
-    }
+      image: 'https://www.techiediaries.com/modern-angular.webp',
+    },
   ];
 
-  constructor(private gestureCtrl: GestureController, private renderer: Renderer2, private router: Router, private platform: Platform) {}
-
-  ngOnInit() {}
+  constructor(
+    private gestureCtrl: GestureController,
+    private renderer: Renderer2,
+    private router: Router,
+    private platform: Platform
+  ) {}
 
   ngAfterViewInit() {
     this.cards.forEach((card, index) => {
@@ -73,7 +85,11 @@ export class ProfilePage implements OnInit, AfterViewInit {
   }
 
   onMove(ev: any, cardElement: HTMLElement) {
-    this.renderer.setStyle(cardElement, 'transform', `translate(${ev.deltaX}px, ${ev.deltaY}px)`);
+    this.renderer.setStyle(
+      cardElement,
+      'transform',
+      `translate(${ev.deltaX}px, ${ev.deltaY}px)`
+    );
   }
 
   onEnd(ev: any, cardElement: HTMLElement, index: number) {
@@ -103,10 +119,10 @@ export class ProfilePage implements OnInit, AfterViewInit {
   }
 
   goToDetails(postId: number) {
-    this.router.navigate(['/post'], {
+    this.router.navigate(['/post-details'], {
       queryParams: {
-        id: postId
-      }
+        id: postId,
+      },
     });
   }
 }

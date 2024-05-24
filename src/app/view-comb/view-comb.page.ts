@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Post, Rating } from '../shared/interfaces';
-import { DataQueryService } from '../data-query.service';
 import { Observable } from 'rxjs';
 import { convertFirebaseDate, calculateRatingsAvg } from '../shared/utils';
-import { CombService } from '../comb.service';
+import { CombService } from '../services/comb.service';
+import { PostService } from '../services/post.service';
 
 @Component({
   selector: 'app-view-comb',
@@ -16,25 +16,25 @@ export class ViewCombPage implements OnInit {
   convertFirebaseDate = convertFirebaseDate;
   calculateRatingsAvg = calculateRatingsAvg;
   extractedSummaries: string[] = [];
-  combinedSummary: string = "";
-  public posts: Observable<Post[]>;
+  combinedSummary: string = '';
+  public posts: any[] = [];
 
   constructor(
     private router: Router,
-    private dataQueryService: DataQueryService,
+    private postService: PostService,
     private combService: CombService
-  ) {
-    this.posts = this.dataQueryService.getPosts();
+  ) {}
+
+  async ngOnInit(): Promise<void> {
+    await this.postService.getPostsCopy();
+    this.posts = this.postService.posts;
   }
 
-  ngOnInit(): void {
-   
-  }
-  ionViewWillEnter(){
-    this.posts.subscribe(posts => {
-      posts.forEach(post => {
-        post.isSelected = false; // Initialize disabled property
-      });
+  async ionViewWillEnter() {
+    await this.postService.getPostsCopy();
+    this.posts = this.postService.posts;
+    this.posts.forEach((post) => {
+      post.isSelected = false; // Initialize disabled property
     });
   }
 
@@ -46,7 +46,7 @@ export class ViewCombPage implements OnInit {
 
   selectsummaries(selectedSummary: string, post: Post) {
     this.extractedSummaries.push(selectedSummary);
-    console.log(this.extractedSummaries,"select",post.isSelected);
+    console.log(this.extractedSummaries, 'select', post.isSelected);
   }
 
   compineSummary() {
@@ -56,22 +56,22 @@ export class ViewCombPage implements OnInit {
   }
 
   toggleCard(post: Post) {
-   
     post.isSelected = !post.isSelected;
   }
 
   SelectUnSelectSummary(selectedSummary: string, post: Post) {
     console.log(post.isSelected);
-    if (post.isSelected==true){
-      this.selectsummaries(selectedSummary, post) ;
+    if (post.isSelected == true) {
+      this.selectsummaries(selectedSummary, post);
       this.toggleCard(post);
     }
-    if (post.isSelected==false){
+    if (post.isSelected == false) {
       this.extractedSummaries = this.extractedSummaries.filter(
-      summary => summary !== selectedSummary );
+        (summary) => summary !== selectedSummary
+      );
       this.toggleCard(post);
     }
-   
-    console.log(this.extractedSummaries,"select/unselect",post.isSelected);
+
+    console.log(this.extractedSummaries, 'select/unselect', post.isSelected);
   }
 }

@@ -8,24 +8,23 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  {{postId}}
   <div *ngIf="post">
     <div class="post-header">
       <h1>{{ post.title }}</h1>
       <p class="meta">
-        <span>{{ post.type }} - {{getUsernameById(post.authorId)}}</span>
+        <span>{{ post.type }} by {{getUsernameById(post.authorId)}}</span>
         <span>{{ convertFirebaseDate(post.date) }} </span>
       </p>
     </div>
     <div class="post-content">
       <ng-container *ngFor="let detail of post.detailsArray; let i = index">
-        <span >
+        <span>
           <img [src]="detail.images[0]" />
         </span>
         <p>{{ detail.summary }}</p>
       </ng-container>
     </div>
-    
+
     <p class="topics">
       <ng-container *ngFor="let topic of post.topics; let i = index">
         {{ i !== 0 ? ', ' : '' }} #{{ topic }}

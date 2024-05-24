@@ -12,7 +12,7 @@ import {
 import { Firestore } from '@angular/fire/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { Router } from '@angular/router';
-import { FirebaseService } from '../firebase.service';
+import { FirebaseService } from '../services/firebase.service';
 import { User } from '../shared/interfaces';
 @Component({
   selector: 'app-auth',

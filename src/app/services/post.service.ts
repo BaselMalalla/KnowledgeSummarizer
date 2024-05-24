@@ -28,7 +28,7 @@ import {
 import { Injectable } from '@angular/core';
 import { DocumentData } from 'firebase/firestore';
 import { Observable, map } from 'rxjs';
-import { Post } from './shared/interfaces';
+import { Post } from '../shared/interfaces';
 
 @Injectable({
   providedIn: 'root',

@@ -3,11 +3,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Post, Rating } from '../shared/interfaces';
-import { DataQueryService } from '../data-query.service';
 import { Observable } from 'rxjs';
 import { convertFirebaseDate, calculateRatingsAvg } from '../shared/utils';
-import { PostService } from '../post.service';
-import { UserService } from '../user.service';
+import { PostService } from '../services/post.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-view',
@@ -22,7 +21,6 @@ export class ViewPage implements OnInit {
   public posts: any[] = [];
   constructor(
     private router: Router,
-    private dataQueryService: DataQueryService,
     private postService: PostService,
     private userService: UserService
   ) {}
@@ -35,7 +33,7 @@ export class ViewPage implements OnInit {
     this.posts = this.postService.posts;
   }
   goToDetails(postId: string | undefined) {
-    this.router.navigate(['/post'], {
+    this.router.navigate(['/post-details'], {
       queryParams: { id: postId },
     });
   }

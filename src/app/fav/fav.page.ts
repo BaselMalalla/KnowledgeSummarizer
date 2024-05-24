@@ -6,10 +6,9 @@ import { Router } from '@angular/router';
   templateUrl: './fav.page.html',
   styleUrls: ['./fav.page.scss'],
 })
-export class FavPage implements OnInit {
+export class FavPage {
   constructor(private router: Router) {}
 
-  ngOnInit() {}
   posts = [
     {
       id: 1,
@@ -39,7 +38,7 @@ export class FavPage implements OnInit {
   ];
 
   goToDetails(postId: number) {
-    this.router.navigate(['/post'], {
+    this.router.navigate(['/post-details'], {
       queryParams: { id: postId },
     });
   }

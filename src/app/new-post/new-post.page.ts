@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { Post, Rating, Comment } from '../shared/interfaces';
-import { FirebaseService } from '../firebase.service';
+import { FirebaseService } from '../services/firebase.service';
 import { AlertController, LoadingController } from '@ionic/angular';
 import {
   Auth,
@@ -12,7 +12,7 @@ import {
 } from '@angular/fire/auth';
 import { Firestore } from '@angular/fire/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
-import { CombService } from '../comb.service';
+import { CombService } from '../services/comb.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -22,17 +22,16 @@ import { Router } from '@angular/router';
 })
 export class NewPostPage {
   postForm: FormGroup;
-   
-  theCombSummary:string=this.combService.combinedSummary;
+
+  theCombSummary: string = this.combService.combinedSummary;
   constructor(
     private fb: FormBuilder,
     private firebaseService: FirebaseService,
     private alertController: AlertController,
     private loadingController: LoadingController,
-    public auth: Auth, 
-    public combService:CombService,
-    public router:Router
-
+    public auth: Auth,
+    public combService: CombService,
+    public router: Router
   ) {
     this.postForm = this.fb.group({
       type: ['', Validators.required],
@@ -161,8 +160,10 @@ export class NewPostPage {
     });
     await alert.present();
   }
-  onSelectCombSummary(){
-    () => {this.combService.combinedSummary = ""}
+  onSelectCombSummary() {
+    () => {
+      this.combService.combinedSummary = '';
+    };
     this.router.navigate(['/view-comb']);
   }
 }
