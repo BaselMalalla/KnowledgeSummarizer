@@ -17,20 +17,20 @@
         <span>{{ convertFirebaseDate(post.date) }} </span>
       </p>
     </div>
-    <img
-      [src]="post.detailsArray[0].images[0]"
-      alt="Post Image"
-      class="post-image"
-    />
     <div class="post-content">
-      <p>{{ post.detailsArray[0].summary }}</p>
-      <p class="topics">
-        <ng-container *ngFor="let topic of post.topics; let i = index">
-          {{ i !== 0 ? ', ' : '' }} #{{ topic }}
-        </ng-container>
-      </p>
+      <ng-container *ngFor="let detail of post.detailsArray; let i = index">
+        <span >
+          <img [src]="detail.images[0]" />
+        </span>
+        <p>{{ detail.summary }}</p>
+      </ng-container>
     </div>
-
+    
+    <p class="topics">
+      <ng-container *ngFor="let topic of post.topics; let i = index">
+        {{ i !== 0 ? ', ' : '' }} #{{ topic }}
+      </ng-container>
+    </p>
     <div class="post-meta">
       <ion-item lines="none" (click)="toggleLike()" class="like-item">
         <ion-icon [name]="userLiked ? 'heart' : 'heart-outline'"></ion-icon>

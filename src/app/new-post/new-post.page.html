@@ -71,7 +71,10 @@
             >
               <ion-item>
                 <ion-label position="floating">Summary {{ i + 1 }}</ion-label>
-                <ion-textarea formControlName="summary"></ion-textarea>
+                <ion-textarea
+                  formControlName="summary"
+                  [(ngModel)]="this.combService.combinedSummary"
+                ></ion-textarea>
               </ion-item>
               <ion-note
                 *ngIf="detail.get('summary')?.touched && detail.get('summary')?.invalid"
@@ -102,6 +105,9 @@
 
         <ion-button expand="block" type="submit" [disabled]="postForm.invalid"
           >Get Posted</ion-button
+        >
+        <ion-button expand="block" (click)="onSelectCombSummary()"
+          >let selects & combine summaries</ion-button
         >
       </ion-card-content>
     </ion-card>
