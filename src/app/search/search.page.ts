@@ -76,12 +76,17 @@ export class SearchPage {
         postRating >= this.ratingRange.lower &&
         postRating <= this.ratingRange.upper;
 
-      const matchesReadStatus =
-        isRead === 'Read'
-          ? post.readBy && post.readBy.length > 0
-          : isRead === 'Unread'
-          ? !post.readBy || post.readBy.length === 0
-          : true;
+      const isPostReadByUser = this.postService.isPostReadByUser(
+        post.readBy,
+        this.userService.getCurrentUserId()
+      );
+      let matchesReadStatus = true;
+
+      if (isRead === 'Read') {
+        matchesReadStatus = post.readBy.length > 0 && isPostReadByUser;
+      } else if (isRead === 'Unread') {
+        matchesReadStatus = !isPostReadByUser;
+      }
 
       const matchesTopic =
         selectedTopics.length > 0
@@ -90,7 +95,7 @@ export class SearchPage {
 
       console.log(selectedTopics, matchesTopic, 'matchesTopic');
 
-      return withinRatingRange && matchesTopic;
+      return withinRatingRange && matchesTopic && matchesReadStatus;
     });
 
     console.log('Applied Filters:', this.filterForm.value);

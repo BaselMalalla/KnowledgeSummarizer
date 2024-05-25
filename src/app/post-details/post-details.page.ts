@@ -90,15 +90,21 @@ export class PostDetailsPage implements OnInit, ViewWillEnter {
     if (this.userId) {
       this.isPostLikedByUser = !this.isPostLikedByUser;
       if (this.isPostLikedByUser) {
+        if (!this.post.likedBy) {
+          this.post.likedBy = [];
+        }
         this.post.likedBy.push(this.userId);
       } else {
-        this.post.likedBy.pop();
+        const index = this.post.likedBy.indexOf(this.userId);
+        if (index > -1) {
+          this.post.likedBy.splice(index, 1);
+        }
       }
       console.log(this.post.likedBy);
+      this.updatePost();
     } else {
       alert('You must be logged in to like a post');
     }
-    this.updatePost();
   }
 
   toggleRead() {

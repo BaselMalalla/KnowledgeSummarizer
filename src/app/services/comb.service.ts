@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CombService {
-
-  constructor() { }
-  public combinedSummary:string[]=[];
+  constructor() {}
+  public combinedSummary: string[] = [];
+  public combinedImages: string[] = [];
 }

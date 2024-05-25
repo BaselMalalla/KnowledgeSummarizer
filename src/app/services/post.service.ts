@@ -34,9 +34,6 @@ import { Post } from '../shared/interfaces';
   providedIn: 'root',
 })
 export class PostService {
-  isPostReadByUser(readBy: string[] | undefined, userId: string): boolean {
-    throw new Error('Method not implemented.');
-  }
   // 1. Object
   post: Post = {
     id: '',
@@ -120,6 +117,7 @@ export class PostService {
       title: post.title,
       topics: post.topics,
       type: post.type,
+      readBy: post.readBy,
     });
   }
 
@@ -131,7 +129,7 @@ export class PostService {
     return likedBy.includes(userId);
   }
 
-  isPostLikedByUser(readBy: string[], userId: string): boolean {
+  isPostReadByUser(readBy: string[], userId: string): boolean {
     return readBy.includes(userId);
   }
 
